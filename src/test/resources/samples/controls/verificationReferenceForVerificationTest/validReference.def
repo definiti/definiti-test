@@ -1,0 +1,10 @@
+verification IsNonBlank {
+  "The string should not be blank"
+  (string: String) => {
+    string.trim().nonEmpty()
+  }
+}
+
+context tests {{{
+  test verification IsNonBlank {}
+}}}

@@ -1,0 +1,104 @@
+package my.person
+
+import my.person.IsNonBlank
+import my.person.IsLengthOf
+import my.person.IsNonEmptyList
+
+context tests {{{
+  test verification IsNonBlank {
+    accept "a"
+    refuse ""
+  }
+
+  /* Not implemented yet:
+
+  test verification IsNonBlank {
+    accept
+      "a"
+      "b"
+      "ab"
+      " ab "
+      "."
+
+    refuse
+      ""
+      " "
+      "  "
+  }
+
+  test verification IsLengthOf {
+    accept
+      "" with (0, 1)
+      "a" with (0, 1)
+      "ab" with (0, 2)
+      "ab" with (1, 2)
+      "abcde" with (1, 10)
+
+    refuse
+      "" with (1, 2) as (1, 2)
+      "a" with (2, 3) as (2, 3)
+      "abcde" with (6, 10) as (6, 10)
+      "abcdefghijk" with (6, 10) as (6, 10)
+  }
+
+  test verification IsNonEmptyList {
+    accept
+      List[String]("item")
+      List[String]("")
+      List[String]("one", "two")
+      List[Number](1, 2)
+      List[List[Number]](List[Number]())
+      List[List[Number]](List[Number](1))
+
+    refuse
+      List[String]()
+      List[Number]()
+      List[List[Number]]()
+  }
+
+  test type Person {
+    accept
+      {
+        firstName: "first"
+        lastName: "last"
+        phone: "0123456789"
+      }
+
+    accept all(firstName, lastName, phone)
+      ("a", "b", "9876543210")
+      ("x", "y", "123456789012")
+
+    refuse
+      {
+        firstName: ""
+        lastName: ""
+        phone: ""
+      }
+
+    refuse all(firstName, lastName, phone)
+      ("a", "b", "123")
+      ("a", "", "0123456789")
+      ("a", "a", "0123456789")
+  }
+
+  test attribute Person.firstName {
+    accept
+      "a"
+      "b"
+
+    refuse
+      ""
+      " "
+  }
+
+  generator validPerson: Person {
+    firstName: nonEmptyString()
+    lastName: nonEmptyString()
+    phone: stringOf(10, 12)
+
+    filter(person) => {
+      person.firstName != person.lastName
+    }
+  }
+  */
+}}}

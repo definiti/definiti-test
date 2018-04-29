@@ -1,0 +1,16 @@
+package x
+
+verification Positive {
+  "The value should be positive"
+  (number: Number) => {
+    number > 0
+  }
+}
+
+context tests {{{
+  test verification Positive {
+    accept 1
+    refuse 0
+    refuse -1
+  }
+}}}
