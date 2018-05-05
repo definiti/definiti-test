@@ -24,7 +24,7 @@ testVerification:
 
 testCase:
   DOC_COMMENT?
-  kind=(ACCEPT | REFUSE) expression;
+  kind=(ACCEPT | REFUSE) expression+;
 
 expression
   : BOOLEAN

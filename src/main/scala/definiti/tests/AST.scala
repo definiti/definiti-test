@@ -18,7 +18,7 @@ object AST {
 
   case class Case(
     kind: CaseKind.Value,
-    expression: Expression,
+    expressions: Seq[Expression],
     comment: Option[String],
     location: Location
   )

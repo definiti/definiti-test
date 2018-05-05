@@ -3,6 +3,7 @@ package definiti.tests.validation.controls
 import definiti.core.Alert
 import definiti.core.ast._
 import definiti.core.validation.{ControlLevel, ControlResult}
+import definiti.tests.AST
 import definiti.tests.AST._
 import definiti.tests.validation.Control
 import definiti.tests.validation.helpers.ExpressionTypes
@@ -32,10 +33,16 @@ object InputTypeForVerificationTestControl extends Control {
 
   private def controlTestCase(testCase: Case, verification: Verification): ControlResult = {
     val typeReference = verification.function.parameters.head.typeReference
-    if (ExpressionTypes.expressionIsTypeOf(testCase.expression, typeReference)) {
+    ControlResult.squash {
+      testCase.expressions.map(controlExpression(_, typeReference))
+    }
+  }
+
+  private def controlExpression(expression: AST.Expression, typeReference: AbstractTypeReference): ControlResult = {
+    if (ExpressionTypes.expressionIsTypeOf(expression, typeReference)) {
       ControlResult.OK
     } else {
-      invalidType(typeReference, testCase.expression.location)
+      invalidType(typeReference, expression.location)
     }
   }
 

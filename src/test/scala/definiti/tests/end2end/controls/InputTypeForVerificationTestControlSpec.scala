@@ -19,11 +19,26 @@ class InputTypeForVerificationTestControlSpec extends EndToEndSpec {
     output shouldBe ok[Root]
   }
 
-  it should "invalidate a reference to a verification when the verification does not exist" in {
+  it should "validate valid multiple expressions" in {
+    val output = processFile("controls.inputTypeForVerificationTest.validMultipleExpressions", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "invalidate a type when it does not match" in {
     val output = processFile("controls.inputTypeForVerificationTest.invalidType", configuration)
     output should beResult(Ko[Root](
       InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidTypeLocation(12, 12, 13)),
       InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidTypeLocation(13, 12, 17))
+    ))
+  }
+
+  it should "invalidate a type when it does not match in multiple expression" in {
+    val output = processFile("controls.inputTypeForVerificationTest.invalidMultipleExpressions", configuration)
+    output should beResult(Ko[Root](
+      InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidMultipleExpressionsLocation(14, 7, 8)),
+      InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidMultipleExpressionsLocation(15, 7, 11)),
+      InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidMultipleExpressionsLocation(19, 7, 11)),
+      InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidMultipleExpressionsLocation(20, 7, 8))
     ))
   }
 }
@@ -34,4 +49,5 @@ object InputTypeForVerificationTestControlSpec {
   val configuration = ConfigurationMock()
 
   val invalidTypeLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidType")
+  val invalidMultipleExpressionsLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidMultipleExpressions")
 }

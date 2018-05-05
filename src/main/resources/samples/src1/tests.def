@@ -10,8 +10,6 @@ context tests {{{
     refuse ""
   }
 
-  /* Not implemented yet:
-
   test verification IsNonBlank {
     accept
       "a"
@@ -25,6 +23,8 @@ context tests {{{
       " "
       "  "
   }
+
+  /* Not implemented yet:
 
   test verification IsLengthOf {
     accept

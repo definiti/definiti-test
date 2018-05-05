@@ -68,7 +68,7 @@ class TestsContextParser(val location: Location) extends LocationUtils {
   private def processTestCase(context: TestCaseContext): Case = {
     Case(
       kind = CaseKind.withName(context.kind.getText),
-      expression = processExpression(context.expression()),
+      expressions = CollectionUtils.scalaSeq(context.expression()).map(processExpression),
       comment = extractDocComment(context.DOC_COMMENT()),
       location = getLocationFromContext(context)
     )
