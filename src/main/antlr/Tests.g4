@@ -26,7 +26,7 @@ testCase:
   DOC_COMMENT?
   kind=(ACCEPT | REFUSE) testSubCase+;
 
-testSubCase: expression ('with' arguments)?;
+testSubCase: expression ('with' withArguments=arguments)? ('as' asArguments=arguments)?;
 
 expression
   : BOOLEAN

@@ -39,9 +39,6 @@ context tests {{{
       "abcdefghijk" with (6, 10)
   }
 
-
-  /* Not implemented yet:
-
   test verification IsLengthOf {
     accept
       "" with (0, 1)
@@ -56,6 +53,8 @@ context tests {{{
       "abcde" with (6, 10) as (6, 10)
       "abcdefghijk" with (6, 10) as (6, 10)
   }
+
+  /* Not implemented yet:
 
   test verification IsNonEmptyList {
     accept

@@ -1,0 +1,59 @@
+package x
+
+verification IsLengthOf(length: Number) {
+  "The string should have a fixed length"
+  (string: String) => {
+    string.length == length
+  }
+}
+
+verification IsLengthOf10 {
+  "The string should have a length of 10"
+  (string: String) => {
+    string.length == 10
+  }
+}
+
+verification IsTypedLengthOf(length: Number) {
+  message("is.typed.length.of", Number)
+  (string: String) => {
+    if (string.length == length) {
+      ok
+    } else {
+      ko(length)
+    }
+  }
+}
+
+verification IsTypedLengthOf10 {
+  message("is.typed.length.of.10", Number)
+  (string: String) => {
+    if (string.length == 10) {
+      ok
+    } else {
+      ko(10)
+    }
+  }
+}
+
+context tests {{{
+  test verification IsLengthOf {
+    accept "0123456789" with (10)
+    refuse "0123456789" with (9)
+  }
+
+  test verification IsLengthOf10 {
+    accept "0123456789"
+    refuse "012345678"
+  }
+
+  test verification IsTypedLengthOf {
+    accept "0123456789" with (10)
+    refuse "0123456789" with (9)
+  }
+
+  test verification IsTypedLengthOf10 {
+    accept "0123456789"
+    refuse "012345678"
+  }
+}}}

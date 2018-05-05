@@ -30,6 +30,7 @@ object AST {
   case class SubCase(
     expression: Expression,
     arguments: Seq[Expression],
+    messageArguments: Seq[Expression],
     location: Location
   )
 

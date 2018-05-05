@@ -1,0 +1,33 @@
+package x
+
+verification IsLengthOf(length: Number) {
+  message("is.length.of", Number)
+  (string: String) => {
+    if (string.length == length) {
+      ok
+    } else {
+      ko(length)
+    }
+  }
+}
+
+verification IsLengthOf10 {
+  message("is.length.of.10", Number)
+  (string: String) => {
+    if (string.length == 10) {
+      ok
+    } else {
+      ko(10)
+    }
+  }
+}
+
+context tests {{{
+  test verification IsLengthOf {
+    refuse "0123456789" with (9) as (1, 2)
+  }
+
+  test verification IsLengthOf10 {
+    refuse "012345678" as (1, 2)
+  }
+}}}

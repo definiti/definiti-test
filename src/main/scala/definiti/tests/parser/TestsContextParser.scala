@@ -93,7 +93,8 @@ class TestsContextParser(val location: Location) extends LocationUtils {
   private def processTestSubCase(context: TestSubCaseContext): SubCase = {
     SubCase(
       expression = processExpression(context.expression()),
-      arguments = Option(context.arguments()).map(processArguments).getOrElse(Seq.empty),
+      arguments = Option(context.withArguments).map(processArguments).getOrElse(Seq.empty),
+      messageArguments = Option(context.asArguments).map(processArguments).getOrElse(Seq.empty),
       location = getLocationFromContext(context)
     )
   }
