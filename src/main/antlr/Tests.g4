@@ -24,12 +24,19 @@ testVerification:
 
 testCase:
   DOC_COMMENT?
-  kind=(ACCEPT | REFUSE) expression+;
+  kind=(ACCEPT | REFUSE) testSubCase+;
+
+testSubCase: expression ('with' arguments)?;
 
 expression
   : BOOLEAN
   | NUMBER
   | STRING
+  ;
+
+arguments
+  : '(' ')'
+  | '(' (expression ',')* expression ')'
   ;
 
 DOC_COMMENT   : '/**' .*? '*/';

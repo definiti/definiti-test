@@ -1,0 +1,15 @@
+package x
+
+verification IsLengthOf(length: Number) {
+  "The string should have a fixed length"
+  (string: String) => {
+    string.length == length
+  }
+}
+
+context tests {{{
+  test verification IsLengthOf {
+    accept "0123456789" with ("")
+    refuse "0123456789" with (true)
+  }
+}}}

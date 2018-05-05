@@ -1,0 +1,15 @@
+package x
+
+verification IsLengthOf10 {
+  "The string should have a length of 10"
+  (string: String) => {
+    string.length == 10
+  }
+}
+
+context tests {{{
+  test verification IsLengthOf10 {
+    accept "0123456789"
+    accept "0123456789" with ()
+  }
+}}}

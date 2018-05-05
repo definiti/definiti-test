@@ -18,7 +18,7 @@ object AST {
 
   case class Case(
     kind: CaseKind.Value,
-    expressions: Seq[Expression],
+    subCases: Seq[SubCase],
     comment: Option[String],
     location: Location
   )
@@ -26,6 +26,12 @@ object AST {
   object CaseKind extends Enumeration {
     val accept, refuse = Value
   }
+
+  case class SubCase(
+    expression: Expression,
+    arguments: Seq[Expression],
+    location: Location
+  )
 
   sealed trait Expression {
     def location: Location

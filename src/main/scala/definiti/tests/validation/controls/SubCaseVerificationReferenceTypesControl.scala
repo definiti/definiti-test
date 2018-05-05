@@ -1,19 +1,19 @@
 package definiti.tests.validation.controls
 
 import definiti.core.Alert
-import definiti.core.ast._
+import definiti.core.ast.{AbstractTypeReference, Library, Location, Verification}
 import definiti.core.validation.{ControlLevel, ControlResult}
 import definiti.tests.AST
-import definiti.tests.AST._
+import definiti.tests.AST.{Case, SubCase, TestVerification, TestsContext}
 import definiti.tests.validation.Control
 import definiti.tests.validation.helpers.ExpressionTypes
 
-object InputTypeForVerificationTestControl extends Control {
-  override def description: String = "Control if given input is the same as verification input"
+object SubCaseVerificationReferenceTypesControl extends Control {
+  override def description: String = "Control that sub case to a verification have the right input types"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
-  override def control(context: TestsContext, library: Library): ControlResult = {
+  override def control(context: AST.TestsContext, library: Library): ControlResult = {
     ControlResult.squash {
       context.testVerifications.map(controlTestVerification(_, context, library))
     }
@@ -32,9 +32,21 @@ object InputTypeForVerificationTestControl extends Control {
   }
 
   private def controlTestCase(testCase: Case, verification: Verification): ControlResult = {
-    val typeReference = verification.function.parameters.head.typeReference
     ControlResult.squash {
-      testCase.subCases.map(subCase => controlExpression(subCase.expression, typeReference))
+      testCase.subCases.map(controlTestSubCase(_, verification))
+    }
+  }
+
+  private def controlTestSubCase(subCase: SubCase, verification: Verification): ControlResult = {
+    if (verification.parameters.length == subCase.arguments.length) {
+      ControlResult.squash {
+        verification.parameters.zip(subCase.arguments)
+          .map { case (verificationParameter, caseArgument) =>
+            controlExpression(caseArgument, verificationParameter.typeReference)
+          }
+      }
+    } else {
+      invalidNumberOfParameters(verification.parameters.length, subCase.arguments.length, subCase.location)
     }
   }
 
@@ -44,6 +56,10 @@ object InputTypeForVerificationTestControl extends Control {
     } else {
       invalidType(typeReference, expression.location)
     }
+  }
+
+  def invalidNumberOfParameters(expectedNumber: Int, gotNumber: Int, location: Location): Alert = {
+    alert(s"The number of parameters for verification does not match (expected: ${expectedNumber}, got: ${gotNumber})", location)
   }
 
   def invalidType(expectedType: AbstractTypeReference, location: Location): Alert = {

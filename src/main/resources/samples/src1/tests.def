@@ -24,6 +24,22 @@ context tests {{{
       "  "
   }
 
+  test verification IsLengthOf {
+    accept
+      "" with (0, 1)
+      "a" with (0, 1)
+      "ab" with (0, 2)
+      "ab" with (1, 2)
+      "abcde" with (1, 10)
+
+    refuse
+      "" with (1, 2)
+      "a" with (2, 3)
+      "abcde" with (6, 10)
+      "abcdefghijk" with (6, 10)
+  }
+
+
   /* Not implemented yet:
 
   test verification IsLengthOf {
