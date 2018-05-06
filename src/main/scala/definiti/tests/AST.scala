@@ -43,4 +43,20 @@ object AST {
   case class NumberExpression(value: BigDecimal, location: Location) extends Expression
 
   case class StringExpression(value: String, location: Location) extends Expression
+
+  case class ConstructorExpression(typ: Type, arguments: Seq[Expression], location: Location) extends Expression
+
+  case class Type(name: String, generics: Seq[Type]) {
+    def readableString: String = {
+      if (generics.nonEmpty) {
+        s"${name}[${generics.map(_.readableString).mkString(", ")}]"
+      } else {
+        name
+      }
+    }
+  }
+
+  object Type {
+    def apply(name: String, generics: Type*)(implicit dummyImplicit: DummyImplicit): Type = new Type(name, generics)
+  }
 }

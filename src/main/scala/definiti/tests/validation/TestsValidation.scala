@@ -10,6 +10,8 @@ class TestsValidation(library: Library) {
     InputTypeForVerificationTestControl,
     SubCaseVerificationMessageTypesControl,
     SubCaseVerificationReferenceTypesControl,
+    ValidConstructorControl,
+    ValidExpressionTypeControl,
     VerificationMessageArgumentsOnlyForRefusedCaseControl,
     VerificationReferenceForVerificationTestControl
   )

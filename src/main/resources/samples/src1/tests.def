@@ -54,8 +54,6 @@ context tests {{{
       "abcdefghijk" with (6, 10) as (6, 10)
   }
 
-  /* Not implemented yet:
-
   test verification IsNonEmptyList {
     accept
       List[String]("item")
@@ -70,6 +68,8 @@ context tests {{{
       List[Number]()
       List[List[Number]]()
   }
+
+  /* Not implemented yet:
 
   test type Person {
     accept

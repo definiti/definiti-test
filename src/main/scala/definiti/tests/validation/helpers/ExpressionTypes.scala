@@ -1,25 +1,19 @@
 package definiti.tests.validation.helpers
 
-import definiti.core.ast.{AbstractTypeReference, Library, TypeReference}
+import definiti.core.ast.Library
 import definiti.tests.AST._
 
 object ExpressionTypes {
-  private val boolean = TypeReference("Boolean")
-  private val number = TypeReference("Number")
-  private val string = TypeReference("String")
+  private val boolean = Type("Boolean", Seq.empty)
+  private val number = Type("Number", Seq.empty)
+  private val string = Type("String", Seq.empty)
 
-  def expressionIsTypeOf(expression: Expression, typeReference: TypeReference): Boolean = {
+  def getTypeOfExpression(expression: Expression): Type = {
     expression match {
-      case _: BooleanExpression => typeReference == boolean
-      case _: NumberExpression => typeReference == number
-      case _: StringExpression => typeReference == string
-    }
-  }
-
-  def expressionIsTypeOf(expression: Expression, abstractTypeReference: AbstractTypeReference): Boolean = {
-    abstractTypeReference match {
-      case typeReference: TypeReference => expressionIsTypeOf(expression, typeReference)
-      case _ => false
+      case _: BooleanExpression => boolean
+      case _: NumberExpression => number
+      case _: StringExpression => string
+      case constructor: ConstructorExpression => constructor.typ
     }
   }
 

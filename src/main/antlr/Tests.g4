@@ -32,12 +32,18 @@ expression
   : BOOLEAN
   | NUMBER
   | STRING
+  | constructor
   ;
+
+constructor: type arguments;
 
 arguments
   : '(' ')'
   | '(' (expression ',')* expression ')'
   ;
+
+generics: '[' (type ',')* type ']';
+type: IDENTIFIER generics?;
 
 DOC_COMMENT   : '/**' .*? '*/';
 BLOCK_COMMENT : '/*' .*? '*/' -> skip;

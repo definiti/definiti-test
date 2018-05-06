@@ -1,8 +1,8 @@
 package definiti.tests.validation
 
-import definiti.core.{Alert, AlertControl}
-import definiti.core.ast.{Library, Location, Root}
+import definiti.core.ast.{Library, Location}
 import definiti.core.validation.{ControlLevel, ControlResult}
+import definiti.core.{Alert, AlertControl}
 import definiti.tests.AST.TestsContext
 
 trait Control {
@@ -26,4 +26,8 @@ trait Control {
   def alert(message: String, location: Location): Alert = AlertControl(name, message, location)
 
   protected implicit def alertToControlResult(alert: Alert): ControlResult = ControlResult(alert)
+
+  protected implicit def autoSquashControlResults(controlResults: Seq[ControlResult]): ControlResult = {
+    ControlResult.squash(controlResults)
+  }
 }

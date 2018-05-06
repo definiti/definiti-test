@@ -1,0 +1,14 @@
+package x
+
+verification IsNonEmpty {
+  "The option should not be empty"
+  [A](option: Option[A]) => {
+    option.nonEmpty
+  }
+}
+
+context tests {{{
+  test verification IsNonEmpty {
+    refuse Option[String, String]()
+  }
+}}}

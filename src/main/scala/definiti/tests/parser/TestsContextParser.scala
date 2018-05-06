@@ -79,15 +79,36 @@ class TestsContextParser(val location: Location) extends LocationUtils {
     val booleanOpt = Option(context.BOOLEAN()).map(boolean => BooleanExpression(boolean.getText == "true", location))
     val numberOpt = Option(context.NUMBER()).map(number => NumberExpression(BigDecimal(number.getText), location))
     val stringOpt = Option(context.STRING()).map(string => StringExpression(string.getText, location))
+    val constructorOpt = Option(context.constructor()).map(processConstructor)
 
     booleanOpt
       .orElse(numberOpt)
       .orElse(stringOpt)
+      .orElse(constructorOpt)
       .getOrElse {
         // Should not happen because all cases have been processed.
         // Defensive coding when adding types.
         throw new RuntimeException(s"Unknown expression ${context}")
       }
+  }
+
+  private def processConstructor(context: ConstructorContext): Expression = {
+    ConstructorExpression(
+      typ = processType(context.`type`()),
+      arguments = processArguments(context.arguments()),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processType(context: TypeContext): Type = {
+    Type(
+      name = context.IDENTIFIER().getText,
+      generics = Option(context.generics()).map(processGenerics).getOrElse(Seq.empty)
+    )
+  }
+
+  private def processGenerics(context: GenericsContext): Seq[Type] = {
+    CollectionUtils.scalaSeq(context.`type`()).map(processType)
   }
 
   private def processTestSubCase(context: TestSubCaseContext): SubCase = {

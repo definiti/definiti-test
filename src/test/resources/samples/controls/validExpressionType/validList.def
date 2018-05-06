@@ -1,0 +1,16 @@
+package x
+
+verification IsNonEmpty {
+  "The list should not be empty"
+  [A](list: List[A]) => {
+    list.nonEmpty()
+  }
+}
+
+context tests {{{
+  test verification IsNonEmpty {
+    accept List[String]("")
+    accept List[Number](1)
+    refuse List[Boolean]()
+  }
+}}}

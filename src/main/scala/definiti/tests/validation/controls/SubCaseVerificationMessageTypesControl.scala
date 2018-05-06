@@ -6,7 +6,7 @@ import definiti.core.validation.{ControlLevel, ControlResult}
 import definiti.tests.AST
 import definiti.tests.AST.{Case, SubCase, TestVerification, TestsContext}
 import definiti.tests.validation.Control
-import definiti.tests.validation.helpers.ExpressionTypes
+import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
 
 object SubCaseVerificationMessageTypesControl extends Control {
   override def description: String = "Control that sub case to a verification have the right message types ('as' part)"
@@ -56,7 +56,7 @@ object SubCaseVerificationMessageTypesControl extends Control {
       ControlResult.squash {
         typedMessage.types.zip(subCase.messageArguments)
           .map { case (messageParameterType, caseArgument) =>
-            controlExpression(caseArgument, messageParameterType)
+            controlExpression(caseArgument, ScopedType(messageParameterType))
           }
       }
     } else {
@@ -64,11 +64,11 @@ object SubCaseVerificationMessageTypesControl extends Control {
     }
   }
 
-  private def controlExpression(expression: AST.Expression, typeReference: AbstractTypeReference): ControlResult = {
-    if (ExpressionTypes.expressionIsTypeOf(expression, typeReference)) {
+  private def controlExpression(expression: AST.Expression, scopedType: ScopedType): ControlResult = {
+    if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression))) {
       ControlResult.OK
     } else {
-      invalidType(typeReference, expression.location)
+      invalidType(scopedType.typeReference, expression.location)
     }
   }
 

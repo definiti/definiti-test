@@ -24,6 +24,11 @@ class InputTypeForVerificationTestControlSpec extends EndToEndSpec {
     output shouldBe ok[Root]
   }
 
+  it should "validate valid list of type" in {
+    val output = processFile("controls.inputTypeForVerificationTest.validListType", configuration)
+    output shouldBe ok[Root]
+  }
+
   it should "invalidate a type when it does not match" in {
     val output = processFile("controls.inputTypeForVerificationTest.invalidType", configuration)
     output should beResult(Ko[Root](
@@ -41,6 +46,14 @@ class InputTypeForVerificationTestControlSpec extends EndToEndSpec {
       InputTypeForVerificationTestControl.invalidType(TypeReference("String"), invalidMultipleExpressionsLocation(20, 7, 8))
     ))
   }
+
+  it should "invalidate a list of invalid type" in {
+    val output = processFile("controls.inputTypeForVerificationTest.invalidListType", configuration)
+    output should beResult(Ko[Root](
+      InputTypeForVerificationTestControl.invalidType(TypeReference("List", Seq(TypeReference("String"))), invalidListTypeLocation(12, 12, 27)),
+      InputTypeForVerificationTestControl.invalidType(TypeReference("List", Seq(TypeReference("String"))), invalidListTypeLocation(13, 12, 27))
+    ))
+  }
 }
 
 object InputTypeForVerificationTestControlSpec {
@@ -50,4 +63,5 @@ object InputTypeForVerificationTestControlSpec {
 
   val invalidTypeLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidType")
   val invalidMultipleExpressionsLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidMultipleExpressions")
+  val invalidListTypeLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidListType")
 }
