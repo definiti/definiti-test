@@ -1,8 +1,9 @@
 package definiti.tests.end2end.controls
 
-import definiti.core.Ko
-import definiti.core.ast.Root
-import definiti.tests.ConfigurationMock
+import definiti.common.ast.Root
+import definiti.common.program.Ko
+import definiti.common.tests.{ConfigurationMock, LocationPath}
+import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.utils.CommonTypes._
 import definiti.tests.validation.controls.ValidConstructorControl
@@ -83,13 +84,11 @@ class ValidConstructorControlSpec extends EndToEndSpec {
 }
 
 object ValidConstructorControlSpec {
-  import EndToEndSpec._
+  val configuration = ConfigurationBuilder().withOnlyControls(ValidConstructorControl).build()
 
-  val configuration = ConfigurationMock()
-
-  val invalidNumberOfArgumentsForOptionLocation = LocationPath.control(ValidConstructorControl.name, "invalidNumberOfArgumentsForOption")
-  val invalidDirectTypeForOptionLocation = LocationPath.control(ValidConstructorControl.name, "invalidDirectTypeForOption")
-  val invalidDirectTypeForListLocation = LocationPath.control(ValidConstructorControl.name, "invalidDirectTypeForList")
-  val invalidDeepTypeForOptionLocation = LocationPath.control(ValidConstructorControl.name, "invalidDeepTypeForOption")
-  val invalidDeepTypeForListLocation = LocationPath.control(ValidConstructorControl.name, "invalidDeepTypeForList")
+  val invalidNumberOfArgumentsForOptionLocation = LocationPath.control(ValidConstructorControl, "invalidNumberOfArgumentsForOption")
+  val invalidDirectTypeForOptionLocation = LocationPath.control(ValidConstructorControl, "invalidDirectTypeForOption")
+  val invalidDirectTypeForListLocation = LocationPath.control(ValidConstructorControl, "invalidDirectTypeForList")
+  val invalidDeepTypeForOptionLocation = LocationPath.control(ValidConstructorControl, "invalidDeepTypeForOption")
+  val invalidDeepTypeForListLocation = LocationPath.control(ValidConstructorControl, "invalidDeepTypeForList")
 }

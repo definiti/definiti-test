@@ -1,8 +1,8 @@
 package definiti.tests.parser
 
-import definiti.core.ast.{Location, Position, Range}
-import org.antlr.v4.runtime.{ParserRuleContext, Token}
+import definiti.common.ast._
 import org.antlr.v4.runtime.tree.TerminalNode
+import org.antlr.v4.runtime.{ParserRuleContext, Token}
 
 trait LocationUtils {
   self: TestsContextParser =>

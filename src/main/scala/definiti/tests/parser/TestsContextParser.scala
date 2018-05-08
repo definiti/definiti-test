@@ -1,7 +1,7 @@
 package definiti.tests.parser
 
-import definiti.core.ast.Location
-import definiti.core.{Invalid, Valid, Validated}
+import definiti.common.ast.Location
+import definiti.common.validation.{Invalid, Valid, Validated}
 import definiti.tests.AST.{TestsContext => TestsContextAST, _}
 import definiti.tests.parser.antlr.TestsParser._
 import definiti.tests.parser.antlr.{TestsLexer, TestsParser}
@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
 import scala.collection.mutable.ListBuffer
 
-class TestsContextParser(val location: Location) extends LocationUtils {
+class TestsContextParser(packageName: String, imports: Map[String, String], val location: Location) extends LocationUtils {
   def parse(content: String): Validated[TestsContextAST] = {
     Valid(content)
       .flatMap(toAntlr)
@@ -58,7 +58,7 @@ class TestsContextParser(val location: Location) extends LocationUtils {
 
   private def processTestVerification(context: TestVerificationContext): TestVerification = {
     TestVerification(
-      verification = context.IDENTIFIER().getText,
+      verification = nameWithImport(context.IDENTIFIER().getText),
       cases = CollectionUtils.scalaSeq(context.testCase()).map(processTestCase),
       comment = extractDocComment(context.DOC_COMMENT()),
       location = getLocationFromContext(context)
@@ -135,5 +135,9 @@ class TestsContextParser(val location: Location) extends LocationUtils {
       }
       temporaryResult
     }
+  }
+
+  private def nameWithImport(name: String): String = {
+    imports.getOrElse(name, name)
   }
 }

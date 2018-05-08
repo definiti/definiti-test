@@ -1,28 +1,23 @@
 package definiti.tests.validation.controls
 
-import definiti.core.Alert
-import definiti.core.ast._
-import definiti.core.validation.{ControlLevel, ControlResult}
-import definiti.tests.AST
+import definiti.common.ast.{AbstractTypeReference, Library, Location, Verification}
+import definiti.common.control.{Control, ControlLevel, ControlResult}
+import definiti.common.validation.Alert
 import definiti.tests.AST._
-import definiti.tests.validation.Control
 import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
 
-object InputTypeForVerificationTestControl extends Control {
+object InputTypeForVerificationTestControl extends Control[TestsContext] {
   override def description: String = "Control if given input is the same as verification input"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: TestsContext, library: Library): ControlResult = {
-    ControlResult.squash {
-      context.testVerifications.map(controlTestVerification(_, context, library))
-    }
+    context.testVerifications.map(controlTestVerification(_, context, library))
   }
 
   private def controlTestVerification(testVerification: TestVerification, context: TestsContext, library: Library): ControlResult = {
-    val verificationName = ExpressionTypes.fullVerificationName(testVerification.verification, context, library)
     library.verificationsMap
-      .get(verificationName)
+      .get(testVerification.verification)
       .map { verification =>
         ControlResult.squash {
           testVerification.cases.map(controlTestCase(_, verification))
@@ -38,7 +33,7 @@ object InputTypeForVerificationTestControl extends Control {
     }
   }
 
-  private def controlExpression(expression: AST.Expression, scopedType: ScopedType): ControlResult = {
+  private def controlExpression(expression: Expression, scopedType: ScopedType): ControlResult = {
     if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression))) {
       ControlResult.OK
     } else {

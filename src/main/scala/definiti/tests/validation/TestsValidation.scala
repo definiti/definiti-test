@@ -1,24 +1,14 @@
 package definiti.tests.validation
 
-import definiti.core.ast.Library
-import definiti.core.validation.ControlResult
+import definiti.common.ast.Library
+import definiti.common.control.ControlResult
 import definiti.tests.AST.TestsContext
-import definiti.tests.validation.controls._
+import definiti.tests.Configuration
 
-class TestsValidation(library: Library) {
-  private val controls: Seq[Control] = Seq(
-    InputTypeForVerificationTestControl,
-    SubCaseVerificationMessageTypesControl,
-    SubCaseVerificationReferenceTypesControl,
-    ValidConstructorControl,
-    ValidExpressionTypeControl,
-    VerificationMessageArgumentsOnlyForRefusedCaseControl,
-    VerificationReferenceForVerificationTestControl
-  )
-
+class TestsValidation(library: Library, configuration: Configuration) {
   def validate(context: TestsContext): ControlResult = {
-    ControlResult.squash {
-      controls.map(_.control(context, library))
-    }
+    Controls.all
+      .filter(configuration.programConfiguration.isControlAccepted)
+      .map(_.control(context, library))
   }
 }

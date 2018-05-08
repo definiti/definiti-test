@@ -1,6 +1,6 @@
 package definiti.tests.validation.helpers
 
-import definiti.core.ast.{AbstractTypeReference, TypeReference, Verification}
+import definiti.common.ast.{AbstractTypeReference, TypeReference, Verification}
 import definiti.tests.AST._
 
 case class ScopedType(typeReference: AbstractTypeReference, generics: Seq[String]) {

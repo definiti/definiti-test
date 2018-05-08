@@ -1,38 +1,29 @@
 package definiti.tests.validation.controls
 
-import definiti.core.Alert
-import definiti.core.ast.{AbstractTypeReference, Library, Location, Verification}
-import definiti.core.validation.{ControlLevel, ControlResult}
+import definiti.common.ast.{Library, Location}
+import definiti.common.control.{Control, ControlLevel, ControlResult}
+import definiti.common.validation.Alert
 import definiti.tests.AST
 import definiti.tests.AST._
-import definiti.tests.validation.Control
-import definiti.tests.validation.controls.SubCaseVerificationReferenceTypesControl.{alert, ignored}
-import definiti.tests.validation.helpers.ExpressionTypes
 
-object VerificationMessageArgumentsOnlyForRefusedCaseControl extends Control {
+object VerificationMessageArgumentsOnlyForRefusedCaseControl extends Control[TestsContext] {
   override def description: String = "Control if message arguments are given only for 'accept' cases"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: AST.TestsContext, library: Library): ControlResult = {
-    ControlResult.squash {
-      context.testVerifications.map(controlTestVerification(_, context, library))
-    }
+    context.testVerifications.map(controlTestVerification(_, context, library))
   }
 
   private def controlTestVerification(testVerification: TestVerification, context: TestsContext, library: Library): ControlResult = {
-    ControlResult.squash {
-      testVerification.cases.map(controlTestCase)
-    }
+    testVerification.cases.map(controlTestCase)
   }
 
   private def controlTestCase(testCase: Case): ControlResult = {
     if (testCase.kind == CaseKind.refuse) {
       ControlResult.OK
     } else {
-      ControlResult.squash {
-        testCase.subCases.map(controlSubCaseOnAccept)
-      }
+      testCase.subCases.map(controlSubCaseOnAccept)
     }
   }
 

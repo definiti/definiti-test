@@ -1,8 +1,9 @@
 package definiti.tests.end2end.controls
 
-import definiti.core.Ko
-import definiti.core.ast.{Root, TypeReference}
-import definiti.tests.ConfigurationMock
+import definiti.common.ast.{Root, TypeReference}
+import definiti.common.program.Ko
+import definiti.common.tests.{ConfigurationMock, LocationPath}
+import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.validation.controls.InputTypeForVerificationTestControl
 
@@ -57,11 +58,9 @@ class InputTypeForVerificationTestControlSpec extends EndToEndSpec {
 }
 
 object InputTypeForVerificationTestControlSpec {
-  import EndToEndSpec._
+  val configuration = ConfigurationBuilder().withOnlyControls(InputTypeForVerificationTestControl).build()
 
-  val configuration = ConfigurationMock()
-
-  val invalidTypeLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidType")
-  val invalidMultipleExpressionsLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidMultipleExpressions")
-  val invalidListTypeLocation = LocationPath.control(InputTypeForVerificationTestControl.name, "invalidListType")
+  val invalidTypeLocation = LocationPath.control(InputTypeForVerificationTestControl, "invalidType")
+  val invalidMultipleExpressionsLocation = LocationPath.control(InputTypeForVerificationTestControl, "invalidMultipleExpressions")
+  val invalidListTypeLocation = LocationPath.control(InputTypeForVerificationTestControl, "invalidListType")
 }

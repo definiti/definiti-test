@@ -1,7 +1,7 @@
 package definiti.tests.parser
 
-import definiti.core.ast.Location
-import definiti.core.{Error, SimpleError}
+import definiti.common.ast.Location
+import definiti.common.validation._
 import org.antlr.v4.runtime.{BaseErrorListener, RecognitionException, Recognizer}
 
 import scala.collection.mutable.ListBuffer

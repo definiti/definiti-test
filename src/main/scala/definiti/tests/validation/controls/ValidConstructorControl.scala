@@ -1,24 +1,22 @@
 package definiti.tests.validation.controls
 
-import definiti.core.Alert
-import definiti.core.ast.{Library, Location}
-import definiti.core.validation.{ControlLevel, ControlResult}
-import definiti.tests.AST
-import definiti.tests.AST.{ConstructorExpression, Expression, TestVerification, Type}
-import definiti.tests.validation.Control
+import definiti.common.ast.{Library, Location}
+import definiti.common.control.{Control, ControlLevel, ControlResult}
+import definiti.common.validation.Alert
+import definiti.tests.AST._
 import definiti.tests.validation.helpers.ExpressionTypes
 
-object ValidConstructorControl extends Control {
+object ValidConstructorControl extends Control[TestsContext] {
   override def description: String = "Check if type constructors are valid"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
-  override def control(context: AST.TestsContext, library: Library): ControlResult = {
+  override def control(context: TestsContext, library: Library): ControlResult = {
     extractConstructorExpressions(context)
       .map(controlConstructorExpression)
   }
 
-  private def extractConstructorExpressions(context: AST.TestsContext): Seq[ConstructorExpression] = {
+  private def extractConstructorExpressions(context: TestsContext): Seq[ConstructorExpression] = {
     context.tests
       .flatMap {
         case test: TestVerification =>
@@ -39,13 +37,13 @@ object ValidConstructorControl extends Control {
     typ.name match {
       case "List" =>
         typ.generics.headOption match {
-          case Some(generic) => expression.arguments.map(controlInnerTypeOfExpression(_, generic))
+          case Some(generic) => ControlResult.squash(expression.arguments.map(controlInnerTypeOfExpression(_, generic)))
           case None => ignored
         }
       case "Option" =>
         if (expression.arguments.length <= 1) {
           typ.generics.headOption match {
-            case Some(generic) => expression.arguments.map(controlInnerTypeOfExpression(_, generic))
+            case Some(generic) => ControlResult.squash(expression.arguments.map(controlInnerTypeOfExpression(_, generic)))
             case None => ignored
           }
         } else {

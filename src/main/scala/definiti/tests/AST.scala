@@ -1,6 +1,6 @@
 package definiti.tests
 
-import definiti.core.ast.Location
+import definiti.common.ast.Location
 
 object AST {
   case class TestsContext(

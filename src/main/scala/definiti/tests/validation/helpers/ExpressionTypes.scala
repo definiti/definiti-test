@@ -1,6 +1,5 @@
 package definiti.tests.validation.helpers
 
-import definiti.core.ast.Library
 import definiti.tests.AST._
 
 object ExpressionTypes {
@@ -14,13 +13,6 @@ object ExpressionTypes {
       case _: NumberExpression => number
       case _: StringExpression => string
       case constructor: ConstructorExpression => constructor.typ
-    }
-  }
-
-  def fullVerificationName(verificationName: String, context: TestsContext, library: Library): String = {
-    PackageFinder.packageOfContext(context, library) match {
-      case "" => verificationName
-      case namespace => namespace + "." + verificationName
     }
   }
 }

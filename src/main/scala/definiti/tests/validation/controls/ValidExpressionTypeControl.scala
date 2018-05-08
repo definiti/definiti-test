@@ -1,14 +1,13 @@
 package definiti.tests.validation.controls
 
-import definiti.core.Alert
-import definiti.core.ast.{Library, Location}
-import definiti.core.validation.{ControlLevel, ControlResult}
+import definiti.common.ast.{Library, Location}
+import definiti.common.control.{Control, ControlLevel, ControlResult}
+import definiti.common.validation.Alert
 import definiti.tests.AST
-import definiti.tests.AST.{Expression, TestVerification, Type}
-import definiti.tests.validation.Control
+import definiti.tests.AST.{Expression, TestVerification, TestsContext, Type}
 import definiti.tests.validation.helpers.ExpressionTypes
 
-object ValidExpressionTypeControl extends Control {
+object ValidExpressionTypeControl extends Control[TestsContext] {
   override def description: String = "Check if an expression returns a known type"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error

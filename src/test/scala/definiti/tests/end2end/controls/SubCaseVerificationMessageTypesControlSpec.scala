@@ -1,10 +1,11 @@
 package definiti.tests.end2end.controls
 
-import definiti.core.Ko
-import definiti.core.ast.{Root, TypeReference}
-import definiti.tests.ConfigurationMock
+import definiti.common.ast.{Root, TypeReference}
+import definiti.common.program.Ko
+import definiti.common.tests.{ConfigurationMock, LocationPath}
+import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
-import definiti.tests.validation.controls.SubCaseVerificationMessageTypesControl
+import definiti.tests.validation.controls.{InputTypeForVerificationTestControl, SubCaseVerificationMessageTypesControl}
 
 
 class SubCaseVerificationMessageTypesControlSpec extends EndToEndSpec {
@@ -41,11 +42,9 @@ class SubCaseVerificationMessageTypesControlSpec extends EndToEndSpec {
 }
 
 object SubCaseVerificationMessageTypesControlSpec {
-  import EndToEndSpec._
+  val configuration = ConfigurationBuilder().withOnlyControls(SubCaseVerificationMessageTypesControl).build()
 
-  val configuration = ConfigurationMock()
-
-  val invalidMessageArgumentsForLiteralLocation = LocationPath.control(SubCaseVerificationMessageTypesControl.name, "invalidMessageArgumentsForLiteral")
-  val invalidNumberOfMessageArgumentsForTypedLocation = LocationPath.control(SubCaseVerificationMessageTypesControl.name, "invalidNumberOfMessageArgumentsForTyped")
-  val invalidTypeOfMessageArgumentsForTypedLocation = LocationPath.control(SubCaseVerificationMessageTypesControl.name, "invalidTypeOfMessageArgumentsForTyped")
+  val invalidMessageArgumentsForLiteralLocation = LocationPath.control(SubCaseVerificationMessageTypesControl, "invalidMessageArgumentsForLiteral")
+  val invalidNumberOfMessageArgumentsForTypedLocation = LocationPath.control(SubCaseVerificationMessageTypesControl, "invalidNumberOfMessageArgumentsForTyped")
+  val invalidTypeOfMessageArgumentsForTypedLocation = LocationPath.control(SubCaseVerificationMessageTypesControl, "invalidTypeOfMessageArgumentsForTyped")
 }

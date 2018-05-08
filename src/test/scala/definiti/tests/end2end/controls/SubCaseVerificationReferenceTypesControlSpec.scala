@@ -1,8 +1,9 @@
 package definiti.tests.end2end.controls
 
-import definiti.core.Ko
-import definiti.core.ast.{Root, TypeReference}
-import definiti.tests.ConfigurationMock
+import definiti.common.ast.{Root, TypeReference}
+import definiti.common.program.Ko
+import definiti.common.tests.{ConfigurationMock, LocationPath}
+import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.validation.controls.SubCaseVerificationReferenceTypesControl
 
@@ -44,11 +45,9 @@ class SubCaseVerificationReferenceTypesControlSpec extends EndToEndSpec {
 }
 
 object SubCaseVerificationReferenceTypesControlSpec {
-  import EndToEndSpec._
+  val configuration = ConfigurationBuilder().withOnlyControls(SubCaseVerificationReferenceTypesControl).build()
 
-  val configuration = ConfigurationMock()
-
-  val oneParameterAndNoArgumentLocation = LocationPath.control(SubCaseVerificationReferenceTypesControl.name, "oneParameterAndNoArgument")
-  val noParameterAndOneArgumentLocation = LocationPath.control(SubCaseVerificationReferenceTypesControl.name, "noParameterAndOneArgument")
-  val parametersAndInvalidArgumentsLocation = LocationPath.control(SubCaseVerificationReferenceTypesControl.name, "parametersAndInvalidArguments")
+  val oneParameterAndNoArgumentLocation = LocationPath.control(SubCaseVerificationReferenceTypesControl, "oneParameterAndNoArgument")
+  val noParameterAndOneArgumentLocation = LocationPath.control(SubCaseVerificationReferenceTypesControl, "noParameterAndOneArgument")
+  val parametersAndInvalidArgumentsLocation = LocationPath.control(SubCaseVerificationReferenceTypesControl, "parametersAndInvalidArguments")
 }

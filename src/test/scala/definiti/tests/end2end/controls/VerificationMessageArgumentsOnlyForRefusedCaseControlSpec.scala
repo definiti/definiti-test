@@ -1,8 +1,9 @@
 package definiti.tests.end2end.controls
 
-import definiti.core.Ko
-import definiti.core.ast.Root
-import definiti.tests.ConfigurationMock
+import definiti.common.ast.Root
+import definiti.common.program.Ko
+import definiti.common.tests.{ConfigurationMock, LocationPath}
+import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.validation.controls.VerificationMessageArgumentsOnlyForRefusedCaseControl
 
@@ -33,9 +34,7 @@ class VerificationMessageArgumentsOnlyForRefusedCaseControlSpec extends EndToEnd
 }
 
 object VerificationMessageArgumentsOnlyForRefusedCaseControlSpec {
-  import EndToEndSpec._
+  val configuration = ConfigurationBuilder().withOnlyControls(VerificationMessageArgumentsOnlyForRefusedCaseControl).build()
 
-  val configuration = ConfigurationMock()
-
-  val messageArgumentsOnAcceptLocation = LocationPath.control(VerificationMessageArgumentsOnlyForRefusedCaseControl.name, "messageArgumentsOnAccept")
+  val messageArgumentsOnAcceptLocation = LocationPath.control(VerificationMessageArgumentsOnlyForRefusedCaseControl, "messageArgumentsOnAccept")
 }

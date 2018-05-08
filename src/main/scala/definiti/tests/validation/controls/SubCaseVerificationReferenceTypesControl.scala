@@ -1,28 +1,24 @@
 package definiti.tests.validation.controls
 
-import definiti.core.Alert
-import definiti.core.ast.{AbstractTypeReference, Library, Location, Verification}
-import definiti.core.validation.{ControlLevel, ControlResult}
+import definiti.common.ast._
+import definiti.common.control.{Control, ControlLevel, ControlResult}
+import definiti.common.validation.Alert
 import definiti.tests.AST
 import definiti.tests.AST.{Case, SubCase, TestVerification, TestsContext}
-import definiti.tests.validation.Control
 import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
 
-object SubCaseVerificationReferenceTypesControl extends Control {
+object SubCaseVerificationReferenceTypesControl extends Control[TestsContext] {
   override def description: String = "Control that sub case to a verification have the right input types"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
-  override def control(context: AST.TestsContext, library: Library): ControlResult = {
-    ControlResult.squash {
-      context.testVerifications.map(controlTestVerification(_, context, library))
-    }
+  override def control(context: TestsContext, library: Library): ControlResult = {
+    context.testVerifications.map(controlTestVerification(_, context, library))
   }
 
   private def controlTestVerification(testVerification: TestVerification, context: TestsContext, library: Library): ControlResult = {
-    val verificationName = ExpressionTypes.fullVerificationName(testVerification.verification, context, library)
     library.verificationsMap
-      .get(verificationName)
+      .get(testVerification.verification)
       .map { verification =>
         ControlResult.squash {
           testVerification.cases.map(controlTestCase(_, verification))
@@ -32,19 +28,15 @@ object SubCaseVerificationReferenceTypesControl extends Control {
   }
 
   private def controlTestCase(testCase: Case, verification: Verification): ControlResult = {
-    ControlResult.squash {
-      testCase.subCases.map(controlTestSubCase(_, verification))
-    }
+    testCase.subCases.map(controlTestSubCase(_, verification))
   }
 
   private def controlTestSubCase(subCase: SubCase, verification: Verification): ControlResult = {
     if (verification.parameters.length == subCase.arguments.length) {
-      ControlResult.squash {
-        verification.parameters.zip(subCase.arguments)
-          .map { case (verificationParameter, caseArgument) =>
-            controlExpression(caseArgument, ScopedType(verificationParameter.typeReference, verification))
-          }
-      }
+      verification.parameters.zip(subCase.arguments)
+        .map { case (verificationParameter, caseArgument) =>
+          controlExpression(caseArgument, ScopedType(verificationParameter.typeReference, verification))
+        }
     } else {
       invalidNumberOfParameters(verification.parameters.length, subCase.arguments.length, subCase.location)
     }
