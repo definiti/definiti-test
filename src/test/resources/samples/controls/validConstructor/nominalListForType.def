@@ -1,0 +1,20 @@
+package x
+
+type Person {
+  names: List[String]
+}
+
+context tests {{{
+  test type Person {
+    accept Person { names: List[String]("") }
+    accept Person {
+      names: List[String]("", "")
+    }
+    accept Person {
+      names: List[String]("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+    }
+    refuse Person {
+      names: List[String]()
+    }
+  }
+}}}

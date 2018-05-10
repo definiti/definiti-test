@@ -3,6 +3,7 @@ package definiti.tests.end2end.controls
 import definiti.common.ast.Root
 import definiti.common.program.Ko
 import definiti.common.tests.{ConfigurationMock, LocationPath}
+import definiti.tests.AST.Type
 import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.utils.CommonTypes._
@@ -13,6 +14,11 @@ class ValidConstructorControlSpec extends EndToEndSpec {
 
   "TestsValidation" should "validate valid List constructor" in {
     val output = processFile("controls.validConstructor.nominalList", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "validate valid List constructor for types" in {
+    val output = processFile("controls.validConstructor.nominalListForType", configuration)
     output shouldBe ok[Root]
   }
 
@@ -58,6 +64,17 @@ class ValidConstructorControlSpec extends EndToEndSpec {
     ))
   }
 
+  it should "invalidate a List with invalid direct type for types" in {
+    val output = processFile("controls.validConstructor.invalidDirectTypeForListForType", configuration)
+    output should beResult(Ko[Root](
+      ValidConstructorControl.unexpectedType(string, number, invalidDirectTypeForListForTypeLocation(10, 27, 28)),
+      ValidConstructorControl.unexpectedType(number, string, invalidDirectTypeForListForTypeLocation(13, 27, 29)),
+      ValidConstructorControl.unexpectedType(string, number, invalidDirectTypeForListForTypeLocation(16, 31, 32)),
+      ValidConstructorControl.unexpectedType(number, string, invalidDirectTypeForListForTypeLocation(19, 30, 32)),
+      ValidConstructorControl.unexpectedType(number, string, invalidDirectTypeForListForTypeLocation(19, 34, 36))
+    ))
+  }
+
   it should "invalidate an Option with invalid deep type" in {
     val output = processFile("controls.validConstructor.invalidDeepTypeForOption", configuration)
     output should beResult(Ko[Root](
@@ -74,10 +91,12 @@ class ValidConstructorControlSpec extends EndToEndSpec {
       ValidConstructorControl.unexpectedType(listOf(number), listOf(string), invalidDeepTypeForListLocation(12, 31, 47)),
       ValidConstructorControl.unexpectedType(number, string, invalidDeepTypeForListLocation(12, 62, 64)),
       ValidConstructorControl.unexpectedType(listOf(number), optionOf(number), invalidDeepTypeForListLocation(12, 67, 85)),
+      ValidConstructorControl.unexpectedType(number, string, invalidDeepTypeForListLocation(12, 82, 84)),
 
       ValidConstructorControl.unexpectedType(optionOf(string), optionOf(number), invalidDeepTypeForListLocation(13, 33, 50)),
       ValidConstructorControl.unexpectedType(string, number, invalidDeepTypeForListLocation(13, 67, 68)),
-      ValidConstructorControl.unexpectedType(optionOf(string), listOf(string), invalidDeepTypeForListLocation(13, 71, 86))
+      ValidConstructorControl.unexpectedType(optionOf(string), listOf(string), invalidDeepTypeForListLocation(13, 71, 86)),
+      ValidConstructorControl.unexpectedType(string, number, invalidDeepTypeForListLocation(13, 84, 85))
     ))
   }
 
@@ -89,6 +108,7 @@ object ValidConstructorControlSpec {
   val invalidNumberOfArgumentsForOptionLocation = LocationPath.control(ValidConstructorControl, "invalidNumberOfArgumentsForOption")
   val invalidDirectTypeForOptionLocation = LocationPath.control(ValidConstructorControl, "invalidDirectTypeForOption")
   val invalidDirectTypeForListLocation = LocationPath.control(ValidConstructorControl, "invalidDirectTypeForList")
+  val invalidDirectTypeForListForTypeLocation = LocationPath.control(ValidConstructorControl, "invalidDirectTypeForListForType")
   val invalidDeepTypeForOptionLocation = LocationPath.control(ValidConstructorControl, "invalidDeepTypeForOption")
   val invalidDeepTypeForListLocation = LocationPath.control(ValidConstructorControl, "invalidDeepTypeForList")
 }

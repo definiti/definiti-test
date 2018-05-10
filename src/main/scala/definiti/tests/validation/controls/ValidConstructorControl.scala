@@ -17,19 +17,23 @@ object ValidConstructorControl extends Control[TestsContext] {
   }
 
   private def extractConstructorExpressions(context: TestsContext): Seq[ConstructorExpression] = {
-    context.tests
-      .flatMap {
-        case test: TestVerification =>
-          test.cases
-            .flatMap(_.subCases)
-            .flatMap { subCase =>
-              (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
-            }
-        case _ => Seq.empty
+    (context.testVerifications.flatMap(_.cases) ++ context.testTypes.flatMap(_.cases))
+      .flatMap(_.subCases)
+      .flatMap { subCase =>
+        (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
       }
-      .collect {
-        case constructorExpression: ConstructorExpression => constructorExpression
-      }
+      .flatMap(extractConstructorsFromExpression)
+  }
+
+  private def extractConstructorsFromExpression(expression: Expression): Seq[ConstructorExpression] = {
+    expression match {
+      case constructorExpression: ConstructorExpression =>
+        constructorExpression +: constructorExpression.arguments.flatMap(extractConstructorsFromExpression)
+      case structureExpression: StructureExpression =>
+        structureExpression.fields.map(_.expression).flatMap(extractConstructorsFromExpression)
+      case _ =>
+        Seq.empty
+    }
   }
 
   private def controlConstructorExpression(expression: ConstructorExpression): ControlResult = {
@@ -57,10 +61,7 @@ object ValidConstructorControl extends Control[TestsContext] {
   private def controlInnerTypeOfExpression(expression: Expression, expectedType: Type): ControlResult = {
     val typ = ExpressionTypes.getTypeOfExpression(expression)
     if (typ == expectedType) {
-      expression match {
-        case constructorExpression: ConstructorExpression => controlConstructorExpression(constructorExpression)
-        case _ => ControlResult.OK
-      }
+      ControlResult.OK
     } else {
       unexpectedType(expectedType, typ, expression.location)
     }
