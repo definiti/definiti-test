@@ -80,11 +80,13 @@ class TestsContextParser(packageName: String, imports: Map[String, String], val 
     val numberOpt = Option(context.NUMBER()).map(number => NumberExpression(BigDecimal(number.getText), location))
     val stringOpt = Option(context.STRING()).map(string => StringExpression(string.getText, location))
     val constructorOpt = Option(context.constructor()).map(processConstructor)
+    val structureOpt = Option(context.structure()).map(processStructure)
 
     booleanOpt
       .orElse(numberOpt)
       .orElse(stringOpt)
       .orElse(constructorOpt)
+      .orElse(structureOpt)
       .getOrElse {
         // Should not happen because all cases have been processed.
         // Defensive coding when adding types.
@@ -102,13 +104,29 @@ class TestsContextParser(packageName: String, imports: Map[String, String], val 
 
   private def processType(context: TypeContext): Type = {
     Type(
-      name = context.IDENTIFIER().getText,
+      name = nameWithImport(context.IDENTIFIER().getText),
       generics = Option(context.generics()).map(processGenerics).getOrElse(Seq.empty)
     )
   }
 
   private def processGenerics(context: GenericsContext): Seq[Type] = {
     CollectionUtils.scalaSeq(context.`type`()).map(processType)
+  }
+
+  private def processStructure(context: StructureContext): Expression = {
+    StructureExpression(
+      typ = processType(context.`type`()),
+      fields = CollectionUtils.scalaSeq(context.field()).map(processField),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processField(context: FieldContext): Field = {
+    Field(
+      name = context.IDENTIFIER().getText,
+      expression = processExpression(context.expression()),
+      location = getLocationFromContext(context)
+    )
   }
 
   private def processTestSubCase(context: TestSubCaseContext): SubCase = {

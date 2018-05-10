@@ -13,6 +13,7 @@ object ExpressionTypes {
       case _: NumberExpression => number
       case _: StringExpression => string
       case constructor: ConstructorExpression => constructor.typ
+      case structure: StructureExpression => structure.typ
     }
   }
 }

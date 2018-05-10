@@ -33,6 +33,7 @@ expression
   | NUMBER
   | STRING
   | constructor
+  | structure
   ;
 
 constructor: type arguments;
@@ -44,6 +45,9 @@ arguments
 
 generics: '[' (type ',')* type ']';
 type: IDENTIFIER generics?;
+
+structure: type '{' field* '}';
+field: IDENTIFIER ':' expression;
 
 DOC_COMMENT   : '/**' .*? '*/';
 BLOCK_COMMENT : '/*' .*? '*/' -> skip;

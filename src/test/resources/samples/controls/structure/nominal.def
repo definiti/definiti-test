@@ -1,0 +1,41 @@
+package x
+
+type Person {
+  firstName: String
+  lastName: String
+}
+
+verification IsValidPerson {
+  "The person should be valid"
+  (person: Person) => {
+    person.firstName.nonEmpty() && person.lastName.nonEmpty()
+  }
+}
+
+context tests {{{
+  test verification IsValidPerson {
+    accept
+      Person {
+        firstName: "First"
+        lastName: "Last"
+      }
+      Person {
+        firstName: "Some"
+        lastName: "Thing"
+      }
+
+    refuse
+      Person {
+        firstName: ""
+        lastName: ""
+      }
+      Person {
+        firstName: ""
+        lastName: "Last"
+      }
+      Person {
+        firstName: "First"
+        lastName: ""
+      }
+  }
+}}}

@@ -1,6 +1,6 @@
 package definiti.tests.validation.helpers
 
-import definiti.common.ast.{AbstractTypeReference, TypeReference, Verification}
+import definiti.common.ast._
 import definiti.tests.AST._
 
 case class ScopedType(typeReference: AbstractTypeReference, generics: Seq[String]) {
@@ -31,6 +31,14 @@ case class ScopedType(typeReference: AbstractTypeReference, generics: Seq[String
 object ScopedType {
   def apply(typeReference: AbstractTypeReference, verification: Verification): ScopedType = {
     new ScopedType(typeReference, verification.function.genericTypes)
+  }
+
+  def apply(typeReference: AbstractTypeReference, definedType: DefinedType): ScopedType = {
+    new ScopedType(typeReference, definedType.genericTypes)
+  }
+
+  def apply(typeDeclaration: TypeDeclaration, definedType: DefinedType): ScopedType = {
+    new ScopedType(Types.typeDeclarationToTypeReference(typeDeclaration), definedType.genericTypes)
   }
 
   def apply(typeReference: AbstractTypeReference): ScopedType = {

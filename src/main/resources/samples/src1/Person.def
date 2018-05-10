@@ -37,3 +37,10 @@ verification IsNonEmptyList {
     list.nonEmpty()
   }
 }
+
+verification HasFrenchPhoneNumber {
+  "The person should have a french phone number"
+  (person: Person) => {
+    person.phone.startsWith("+33")
+  }
+}

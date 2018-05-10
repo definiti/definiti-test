@@ -3,6 +3,8 @@ package my.person
 import my.person.IsNonBlank
 import my.person.IsLengthOf
 import my.person.IsNonEmptyList
+import my.person.HasFrenchPhoneNumber
+import my.person.Person
 
 context tests {{{
   test verification IsNonBlank {
@@ -67,6 +69,26 @@ context tests {{{
       List[String]()
       List[Number]()
       List[List[Number]]()
+  }
+
+  test verification HasFrenchPhoneNumber {
+    accept
+      Person {
+        firstName: "first"
+        lastName: "last"
+        phone: "+33123456789"
+      }
+    refuse
+      Person {
+        firstName: "first"
+        lastName: "last"
+        phone: "0123456789"
+      }
+      Person {
+        firstName: "first"
+        lastName: "last"
+        phone: "+34123456789"
+      }
   }
 
   /* Not implemented yet:

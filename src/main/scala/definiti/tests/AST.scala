@@ -59,4 +59,8 @@ object AST {
   object Type {
     def apply(name: String, generics: Type*)(implicit dummyImplicit: DummyImplicit): Type = new Type(name, generics)
   }
+
+  case class StructureExpression(typ: Type, fields: Seq[Field], location: Location) extends Expression
+
+  case class Field(name: String, expression: Expression, location: Location)
 }
