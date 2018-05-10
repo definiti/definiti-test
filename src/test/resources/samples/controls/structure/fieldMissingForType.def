@@ -1,0 +1,18 @@
+package x
+
+type Person {
+  firstName: String
+  lastName: String
+}
+
+context tests {{{
+  test type Person {
+    accept Person {
+      firstName: "First"
+    }
+
+    refuse Person {
+      lastName: "Last"
+    }
+  }
+}}}

@@ -16,9 +16,7 @@ object StructureControl extends Control[TestsContext] {
   }
 
   private def extractStructures(context: TestsContext): Seq[StructureExpression] = {
-    context
-      .testVerifications
-      .flatMap(_.cases)
+    (context.testVerifications.flatMap(_.cases) ++ context.testTypes.flatMap(_.cases))
       .flatMap(_.subCases)
       .map(_.expression)
       .flatMap(extractStructuresFromExpression)

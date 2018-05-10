@@ -11,16 +11,29 @@ import definiti.tests.validation.controls.StructureControl
 class StructureControlSpec extends EndToEndSpec {
   import StructureControlSpec._
 
-  "TestsValidation" should "validate valid structure" in {
+  "TestsValidation" should "validate valid structure for verification" in {
     val output = processFile("controls.structure.nominal", configuration)
     output shouldBe ok[Root]
   }
 
-  it should "invalidate a structure missing a field" in {
+  it should "validate valid structure for type" in {
+    val output = processFile("controls.structure.nominalForType", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "invalidate a structure missing a field for verification" in {
     val output = processFile("controls.structure.fieldMissing", configuration)
     output should beResult(Ko[Root](
       StructureControl.fieldMissing("lastName", Type("x.Person"), fieldMissingLocation(17, 12, 19, 6)),
       StructureControl.fieldMissing("firstName", Type("x.Person"), fieldMissingLocation(21, 12, 23, 6))
+    ))
+  }
+
+  it should "invalidate a structure missing a field for types" in {
+    val output = processFile("controls.structure.fieldMissingForType", configuration)
+    output should beResult(Ko[Root](
+      StructureControl.fieldMissing("lastName", Type("x.Person"), fieldMissingForTypeLocation(10, 12, 12, 6)),
+      StructureControl.fieldMissing("firstName", Type("x.Person"), fieldMissingForTypeLocation(14, 12, 16, 6))
     ))
   }
 
@@ -66,6 +79,7 @@ object StructureControlSpec {
   val configuration = ConfigurationBuilder().withOnlyControls(StructureControl).build()
 
   val fieldMissingLocation = LocationPath.control(StructureControl, "fieldMissing")
+  val fieldMissingForTypeLocation = LocationPath.control(StructureControl, "fieldMissingForType")
   val fieldAddedLocation = LocationPath.control(StructureControl, "fieldAdded")
   val invalidFieldTypeLocation = LocationPath.control(StructureControl, "invalidFieldType")
   val invalidNestedTypeLocation = LocationPath.control(StructureControl, "invalidNestedType")
