@@ -1,0 +1,15 @@
+type Container[A] {
+  values: List[A]
+}
+
+context tests {{{
+  test type Container[String] {
+    accept
+      Container[Number] { values: List[Number](1) }
+
+    refuse
+      Container[Boolean] {
+        values: List[Boolean]()
+      }
+  }
+}}}

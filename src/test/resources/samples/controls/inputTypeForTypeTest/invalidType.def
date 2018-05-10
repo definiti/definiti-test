@@ -1,0 +1,16 @@
+type Person {
+  name: String
+}
+
+type Character {
+  category: String
+}
+
+context tests {{{
+  test type Person {
+    accept Character {
+      category: ""
+    }
+    refuse ""
+  }
+}}}
