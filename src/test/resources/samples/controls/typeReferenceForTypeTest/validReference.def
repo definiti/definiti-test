@@ -1,0 +1,7 @@
+type Person {
+  name: String
+}
+
+context tests {{{
+  test type Person {}
+}}}

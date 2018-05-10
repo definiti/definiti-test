@@ -1,0 +1,11 @@
+type Person {
+  name: String
+}
+
+type Contacts[A] {
+  contacts: List[A]
+}
+
+context tests {{{
+  test type Contacts[Person] {}
+}}}

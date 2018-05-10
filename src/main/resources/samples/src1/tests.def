@@ -91,6 +91,20 @@ context tests {{{
       }
   }
 
+  test type Person {
+    accept Person {
+      firstName: "first"
+      lastName: "last"
+      phone: "0123456789"
+    }
+
+    refuse Person {
+      firstName: ""
+      lastName: ""
+      phone: ""
+    }
+  }
+
   /* Not implemented yet:
 
   test type Person {

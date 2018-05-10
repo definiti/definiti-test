@@ -16,6 +16,13 @@ object AST {
     location: Location
   ) extends Test
 
+  case class TestType(
+    typ: Type,
+    cases: Seq[Case],
+    comment: Option[String],
+    location: Location
+  ) extends Test
+
   case class Case(
     kind: CaseKind.Value,
     subCases: Seq[SubCase],

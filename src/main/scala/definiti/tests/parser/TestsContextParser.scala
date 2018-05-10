@@ -39,14 +39,15 @@ class TestsContextParser(packageName: String, imports: Map[String, String], val 
   }
 
   private def toAST(context: TestsContext): TestsContextAST = {
-    val testVerifications = ListBuffer[TestVerification]()
+    val tests = ListBuffer[Test]()
 
     CollectionUtils.scalaSeq(context.toplevel()).foreach { element =>
-      appendIfDefined(element.testVerification(), testVerifications, processTestVerification)
+      appendIfDefined(element.testVerification(), tests, processTestVerification)
+      appendIfDefined(element.testType(), tests, processTestType)
     }
 
     TestsContextAST(
-      tests = List(testVerifications: _*)
+      tests = List(tests: _*)
     )
   }
 
@@ -59,6 +60,15 @@ class TestsContextParser(packageName: String, imports: Map[String, String], val 
   private def processTestVerification(context: TestVerificationContext): TestVerification = {
     TestVerification(
       verification = nameWithImport(context.IDENTIFIER().getText),
+      cases = CollectionUtils.scalaSeq(context.testCase()).map(processTestCase),
+      comment = extractDocComment(context.DOC_COMMENT()),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processTestType(context: TestTypeContext): TestType = {
+    TestType(
+      typ = processType(context.`type`()),
       cases = CollectionUtils.scalaSeq(context.testCase()).map(processTestCase),
       comment = extractDocComment(context.DOC_COMMENT()),
       location = getLocationFromContext(context)

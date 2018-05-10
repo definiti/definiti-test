@@ -5,6 +5,7 @@ NUMBER       : [0-9]+('.'[0-9]+)?;
 STRING       : '"' ( '\\"' | . )*? '"';
 TEST         : 'test';
 VERIFICATION : 'verification';
+TYPE         : 'type';
 ACCEPT       : 'accept';
 REFUSE       : 'refuse';
 IDENTIFIER   : [a-zA-Z0-9]+;
@@ -13,11 +14,19 @@ tests: toplevel*;
 
 toplevel
   : testVerification
+  | testType
   ;
 
 testVerification:
   DOC_COMMENT?
   TEST VERIFICATION IDENTIFIER '{'
+    testCase*
+  '}'
+;
+
+testType:
+  DOC_COMMENT?
+  TEST TYPE type '{'
     testCase*
   '}'
 ;
