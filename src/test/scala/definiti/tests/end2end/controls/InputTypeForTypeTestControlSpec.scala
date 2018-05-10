@@ -26,6 +26,11 @@ class InputTypeForTypeTestControlSpec extends EndToEndSpec {
     output shouldBe ok[Root]
   }
 
+  it should "validate valid alias type" in {
+    val output = processFile("controls.inputTypeForTypeTest.validAliasType", configuration)
+    output shouldBe ok[Root]
+  }
+
   it should "invalidate a type when it does not match" in {
     val output = processFile("controls.inputTypeForTypeTest.invalidType", configuration)
     output should beResult(Ko[Root](
@@ -51,6 +56,14 @@ class InputTypeForTypeTestControlSpec extends EndToEndSpec {
       InputTypeForTypeTestControl.invalidType(Type("Container", Type("String")), invalidGenericsLocation(11, 7, 13, 8))
     ))
   }
+
+  it should "invalidate an invalid alias type" in {
+    val output = processFile("controls.inputTypeForTypeTest.invalidAliasType", configuration)
+    output should beResult(Ko[Root](
+      InputTypeForTypeTestControl.invalidType(Type("NonEmptyList", Type("String")), invalidAliasTypeLocation(5, 12, 27)),
+      InputTypeForTypeTestControl.invalidType(Type("NonEmptyList", Type("String")), invalidAliasTypeLocation(6, 12, 14))
+    ))
+  }
 }
 
 object InputTypeForTypeTestControlSpec {
@@ -59,4 +72,5 @@ object InputTypeForTypeTestControlSpec {
   val invalidTypeLocation = LocationPath.control(InputTypeForTypeTestControl, "invalidType")
   val invalidMultipleExpressionsLocation = LocationPath.control(InputTypeForTypeTestControl, "invalidMultipleExpressions")
   val invalidGenericsLocation = LocationPath.control(InputTypeForTypeTestControl, "invalidGenerics")
+  val invalidAliasTypeLocation = LocationPath.control(InputTypeForTypeTestControl, "invalidAliasType")
 }

@@ -5,6 +5,7 @@ import my.person.IsLengthOf
 import my.person.IsNonEmptyList
 import my.person.HasFrenchPhoneNumber
 import my.person.Person
+import my.person.NonEmptyList
 
 context tests {{{
   test verification IsNonBlank {
@@ -103,6 +104,11 @@ context tests {{{
       lastName: ""
       phone: ""
     }
+  }
+
+  test type NonEmptyList[String] {
+    accept List[String]("")
+    refuse List[String]()
   }
 
   /* Not implemented yet:

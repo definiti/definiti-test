@@ -1,0 +1,8 @@
+type NonEmptyList[A] = List[A]
+
+context tests {{{
+  test type NonEmptyList[String] {
+    accept List[Number](1)
+    refuse ""
+  }
+}}}

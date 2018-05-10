@@ -44,3 +44,5 @@ verification HasFrenchPhoneNumber {
     person.phone.startsWith("+33")
   }
 }
+
+type NonEmptyList[A] = List[A] verifying IsNonEmptyList
