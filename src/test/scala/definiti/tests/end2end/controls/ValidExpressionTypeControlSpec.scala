@@ -17,10 +17,22 @@ class ValidExpressionTypeControlSpec extends EndToEndSpec {
     output shouldBe ok[Root]
   }
 
+  it should "validate valid nominal type for type tests" in {
+    val output = processFile("controls.validExpressionType.nominalForType", configuration)
+    output shouldBe ok[Root]
+  }
+
   it should "invalidate unknown type" in {
     val output = processFile("controls.validExpressionType.invalidType", configuration)
     output should beResult(Ko[Root](
       ValidExpressionTypeControl.invalidType(Type("Unknown"), invalidTypeLocation(12, 12, 21))
+    ))
+  }
+
+  it should "invalidate unknown type for type tests" in {
+    val output = processFile("controls.validExpressionType.invalidTypeForType", configuration)
+    output should beResult(Ko[Root](
+      ValidExpressionTypeControl.invalidType(Type("Unknown"), invalidTypeForTypeLocation(9, 12, 21))
     ))
   }
 
@@ -49,6 +61,7 @@ object ValidExpressionTypeControlSpec {
   val configuration = ConfigurationBuilder().withOnlyControls(ValidExpressionTypeControl).build()
 
   val invalidTypeLocation = LocationPath.control(ValidExpressionTypeControl, "invalidType")
+  val invalidTypeForTypeLocation = LocationPath.control(ValidExpressionTypeControl, "invalidTypeForType")
   val invalidListLocation = LocationPath.control(ValidExpressionTypeControl, "invalidList")
   val invalidGenericNumberLocation = LocationPath.control(ValidExpressionTypeControl, "invalidGenericNumber")
 }

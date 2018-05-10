@@ -18,15 +18,11 @@ object ValidExpressionTypeControl extends Control[TestsContext] {
   }
 
   private def extractExpressions(context: AST.TestsContext): Seq[Expression] = {
-    context.tests.flatMap {
-      case test: TestVerification =>
-        test.cases
-          .flatMap(_.subCases)
-          .flatMap { subCase =>
-            (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
-          }
-      case _ => Seq.empty
-    }
+    (context.testVerifications.flatMap(_.cases) ++ context.testTypes.flatMap(_.cases))
+      .flatMap(_.subCases)
+      .flatMap { subCase =>
+        (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
+      }
   }
 
   private def controlExpression(expression: Expression, library: Library): ControlResult = {
