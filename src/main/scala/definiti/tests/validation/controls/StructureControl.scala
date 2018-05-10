@@ -3,7 +3,7 @@ package definiti.tests.validation.controls
 import definiti.common.ast._
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
-import definiti.tests.AST.{StructureExpression, TestsContext, Type}
+import definiti.tests.AST.{ConstructorExpression, StructureExpression, TestsContext, Type, Expression}
 import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType, Types}
 
 object StructureControl extends Control[TestsContext] {
@@ -21,9 +21,18 @@ object StructureControl extends Control[TestsContext] {
       .flatMap(_.cases)
       .flatMap(_.subCases)
       .map(_.expression)
-      .collect {
-        case structureExpression: StructureExpression => structureExpression
-      }
+      .flatMap(extractStructuresFromExpression)
+  }
+
+  private def extractStructuresFromExpression(expression: Expression): Seq[StructureExpression] = {
+    expression match {
+      case constructorExpression: ConstructorExpression =>
+        constructorExpression.arguments.flatMap(extractStructuresFromExpression)
+      case structureExpression: StructureExpression =>
+        structureExpression +: structureExpression.fields.map(_.expression).flatMap(extractStructuresFromExpression)
+      case _ =>
+        Seq.empty
+    }
   }
 
   private def controlStructure(structureExpression: StructureExpression, library: Library): ControlResult = {

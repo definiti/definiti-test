@@ -1,0 +1,37 @@
+package x
+
+type Person {
+  firstName: String
+  lastName: String
+  contacts: List[Contact]
+}
+
+type Contact {
+  name: String
+  phone: String
+}
+
+verification IsValidPerson {
+  "The person should be valid"
+  (person: Person) => {
+    person.firstName.nonEmpty() && person.lastName.nonEmpty()
+  }
+}
+
+context tests {{{
+  test verification IsValidPerson {
+    accept Person {
+      firstName: "First"
+      lastName: "Last"
+      contacts: List[Boolean](true)
+    }
+
+    refuse Person {
+      firstName: ""
+      lastName: ""
+      contacts: List[Contact](Contact {
+        name: ""
+      })
+    }
+  }
+}}}

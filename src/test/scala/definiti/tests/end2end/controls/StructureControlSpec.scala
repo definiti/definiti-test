@@ -39,6 +39,27 @@ class StructureControlSpec extends EndToEndSpec {
       StructureControl.invalidType(TypeReference("String"), Type("Boolean"), invalidFieldTypeLocation(19, 17, 21))
     ))
   }
+
+  it should "validate a structure with a nested structure" in {
+    val output = processFile("controls.structure.nominalDeepStructure", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "invalidate a structure with an invalid nested structure" in {
+    val output = processFile("controls.structure.invalidNestedType", configuration)
+    output should beResult(Ko[Root](
+      StructureControl.invalidType(TypeReference("x.Contact"), Type("Boolean"), invalidNestedTypeLocation(26, 16, 20)),
+      StructureControl.fieldMissing("phone", Type("x.Contact"), invalidNestedTypeLocation(32, 16, 34, 8))
+    ))
+  }
+
+  it should "invalidate a structure with an invalid nested structure in List" in {
+    val output = processFile("controls.structure.invalidNestedTypeInList", configuration)
+    output should beResult(Ko[Root](
+      StructureControl.invalidType(TypeReference("List", Seq(TypeReference("x.Contact"))), Type("List", Type("Boolean")), invalidNestedTypeInListLocation(26, 17, 36)),
+      StructureControl.fieldMissing("phone", Type("x.Contact"), invalidNestedTypeInListLocation(32, 31, 34, 8))
+    ))
+  }
 }
 
 object StructureControlSpec {
@@ -47,4 +68,6 @@ object StructureControlSpec {
   val fieldMissingLocation = LocationPath.control(StructureControl, "fieldMissing")
   val fieldAddedLocation = LocationPath.control(StructureControl, "fieldAdded")
   val invalidFieldTypeLocation = LocationPath.control(StructureControl, "invalidFieldType")
+  val invalidNestedTypeLocation = LocationPath.control(StructureControl, "invalidNestedType")
+  val invalidNestedTypeInListLocation = LocationPath.control(StructureControl, "invalidNestedTypeInList")
 }
