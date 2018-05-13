@@ -111,11 +111,13 @@ context tests {{{
     refuse List[String]()
   }
 
+  generator name(): String = alphaChar().toUpperCase().append(alphaString().toLowerCase())
+
   generator phoneString(): String = numericStringOf(10, 10)
 
   generator validPerson(): Person = Person {
-    firstName: nonEmptyString()
-    lastName: nonEmptyString()
+    firstName: name()
+    lastName: name()
     phone: phoneString()
   }
 

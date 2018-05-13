@@ -1,6 +1,6 @@
 package definiti.tests.validation.helpers
 
-import definiti.common.ast.{Expression => _, _}
+import definiti.common.ast.{AttributeCall => _, Expression => _, MethodCall => _, Reference => _, _}
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
 
@@ -10,18 +10,56 @@ object Types {
   private val string = Type("String", Seq.empty)
   private val any = Type("Any", Seq.empty)
 
-  def getTypeOfExpression(expression: Expression, validationContext: ValidationContext): Type = {
+  def getTypeOfExpression(expression: Expression, context: ValidationContext): Type = {
     expression match {
       case _: BooleanExpression => boolean
       case _: NumberExpression => number
       case _: StringExpression => string
       case generation: GenerationExpression =>
-        validationContext.generators.find(_.fullName == generation.name)
+        context.generators.find(_.fullName == generation.name)
           .map { generator =>
             Types.replaceGenerics(generator.typ, generator.generics.zip(generation.generics).toMap)
           }
           .getOrElse(any)
       case structure: StructureExpression => structure.typ
+      case methodCall: MethodCall =>
+        val innerExpressionType = getTypeOfExpression(methodCall.inner, context)
+        context.getFinalClassDefinition(innerExpressionType.name) match {
+          case Some(native: NativeClassDefinition) =>
+            (for {
+              method <- native.methods.find(_.name == methodCall.method)
+              returnType = typeReferenceToType(method.returnType)
+              finalType = Types.replaceGenerics(returnType, method.genericTypes.zip(methodCall.generics).toMap)
+            } yield {
+              finalType
+            })
+              .getOrElse(any)
+          case _ => any
+        }
+      case attributeCall: AttributeCall =>
+        val innerExpressionType = getTypeOfExpression(attributeCall.inner, context)
+        context.getFinalClassDefinition(innerExpressionType.name) match {
+          case Some(native: NativeClassDefinition) =>
+            native.attributes
+              .find(_.name == attributeCall.attribute)
+              .map(_.typeDeclaration)
+              .map(typeDeclarationToType)
+              .getOrElse(any)
+          case Some(definedType: DefinedType) =>
+            definedType.attributes
+              .find(_.name == attributeCall.attribute)
+              .map(_.typeDeclaration)
+              .map(typeDeclarationToType)
+              .getOrElse(any)
+          case Some(enum: Enum) =>
+            Type(enum.fullName)
+          case _ => any
+        }
+      case reference: Reference =>
+        // For now, only enum are accepted as targets.
+        context.getEnum(reference.target)
+          .map(enum => Type(enum.fullName))
+          .getOrElse(any)
     }
   }
 
@@ -36,6 +74,13 @@ object Types {
     Type(
       name = typeDeclaration.typeName,
       generics = typeDeclaration.genericTypes.map(typeDeclarationToType)
+    )
+  }
+
+  def typeReferenceToType(typeReference: TypeReference): Type = {
+    Type(
+      name = typeReference.typeName,
+      generics = typeReference.genericTypes.map(typeReferenceToType)
     )
   }
 

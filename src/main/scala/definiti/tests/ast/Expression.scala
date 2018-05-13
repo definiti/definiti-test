@@ -17,3 +17,9 @@ case class GenerationExpression(name: String, generics: Seq[Type], arguments: Se
 case class StructureExpression(typ: Type, fields: Seq[Field], location: Location) extends Expression
 
 case class Field(name: String, expression: Expression, location: Location)
+
+case class Reference(target: String, location: Location) extends Expression
+
+case class MethodCall(inner: Expression, method: String, generics: Seq[Type], arguments: Seq[Expression], location: Location) extends Expression
+
+case class AttributeCall(inner: Expression, attribute: String, location: Location) extends Expression

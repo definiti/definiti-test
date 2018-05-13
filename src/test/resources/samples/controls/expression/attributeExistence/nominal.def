@@ -1,0 +1,24 @@
+type Person {
+  firstName: String
+  lastName: String
+}
+
+type People = Person
+
+enum Result { valid invalid }
+
+context tests {{{
+  generator native(): Number = anyString().length
+
+  generator definedType(): String = Person {
+    firstName: ""
+    lastName: ""
+  }.firstName
+
+  generator aliasType(): String = People {
+    firstName: ""
+    lastName: ""
+  }.firstName
+
+  generator fromEnum(): Result = Result.valid
+}}}

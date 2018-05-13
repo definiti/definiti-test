@@ -1,6 +1,6 @@
 package definiti.tests.validation
 
-import definiti.common.ast.{Expression => _, _}
+import definiti.common.ast.{AttributeCall => _, Expression => _, MethodCall => _, _}
 import definiti.tests.ast._
 
 case class ValidationContext(
@@ -63,6 +63,10 @@ case class ValidationContext(
         generationExpression +: generationExpression.arguments.flatMap(extractDeepExpressions)
       case structureExpression: StructureExpression =>
         structureExpression +: structureExpression.fields.map(_.expression).flatMap(extractDeepExpressions)
+      case methodCall: MethodCall =>
+        (methodCall +: extractDeepExpressions(methodCall.inner)) ++ methodCall.arguments.flatMap(extractDeepExpressions)
+      case attributeCall: AttributeCall =>
+        attributeCall +: extractDeepExpressions(attributeCall.inner)
       case other =>
         Seq(other)
     }
@@ -80,11 +84,26 @@ case class ValidationContext(
     library.typesMap.get(typeName)
   }
 
+  def getFinalClassDefinition(typeName: String): Option[ClassDefinition] = {
+    getClassDefinition(typeName) match {
+      case Some(aliasType: AliasType) => getFinalClassDefinition(aliasType.alias.typeName)
+      case other => other
+    }
+  }
+
   def getDefinedType(typeName: String): Option[DefinedType] = {
     library.typesMap
       .get(typeName)
       .collect {
         case definedType: DefinedType => definedType
+      }
+  }
+
+  def getEnum(enumName: String): Option[ClassDefinition] = {
+    library.typesMap
+      .get(enumName)
+      .collect {
+        case enum: Enum => enum
       }
   }
 

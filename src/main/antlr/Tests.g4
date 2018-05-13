@@ -47,6 +47,9 @@ expression
   | STRING
   | generation
   | structure
+  | inner=expression '.' method=IDENTIFIER generics? arguments // method call
+  | inner=expression '.' attribute=IDENTIFIER                  // attribute call
+  | reference=IDENTIFIER
   ;
 
 generation: name=IDENTIFIER generics? arguments;

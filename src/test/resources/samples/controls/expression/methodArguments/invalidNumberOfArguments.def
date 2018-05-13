@@ -1,0 +1,7 @@
+context tests {{{
+  generator native(): String = anyString().substring()
+
+  generator native(): String = anyString().substring(0)
+
+  generator native(): String = anyString().substring(0, 1, 2)
+}}}

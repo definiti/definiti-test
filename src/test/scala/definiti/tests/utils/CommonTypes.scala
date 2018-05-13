@@ -6,6 +6,7 @@ object CommonTypes {
   val boolean = Type("Boolean")
   val number = Type("Number")
   val string = Type("String")
+  val any = Type("Any")
 
   def listOf(typ: String) = Type("List", Type(typ))
 

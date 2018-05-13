@@ -66,12 +66,18 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
     val stringOpt = Option(context.STRING()).map(string => StringExpression(string.getText, location))
     val generationOpt = Option(context.generation()).map(processGeneration)
     val structureOpt = Option(context.structure()).map(processStructure)
+    val methodOpt = Option(context).filter(_.method != null).map(processMethod)
+    val attributeOpt = Option(context).filter(_.attribute != null).map(processAttribute)
+    val referenceOpt = Option(context).filter(_.reference != null).map(processReference)
 
     booleanOpt
       .orElse(numberOpt)
       .orElse(stringOpt)
       .orElse(generationOpt)
       .orElse(structureOpt)
+      .orElse(methodOpt)
+      .orElse(attributeOpt)
+      .orElse(referenceOpt)
       .getOrElse {
         // Should not happen because all cases have been processed.
         // Defensive coding when adding types.
@@ -111,6 +117,31 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
     Field(
       name = context.IDENTIFIER().getText,
       expression = processExpression(context.expression()),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processMethod(context: ExpressionContext): MethodCall = {
+    MethodCall(
+      inner = processExpression(context.inner),
+      method = context.method.getText,
+      generics = Option(context.generics()).map(processGenerics).getOrElse(Seq.empty),
+      arguments = processArguments(context.arguments()),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processAttribute(context: ExpressionContext): AttributeCall = {
+    AttributeCall(
+      inner = processExpression(context.inner),
+      attribute = context.attribute.getText,
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processReference(context: ExpressionContext): Reference = {
+    Reference(
+      target = nameWithImport(context.reference.getText),
       location = getLocationFromContext(context)
     )
   }

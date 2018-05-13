@@ -44,4 +44,8 @@ object ScopedType {
   def apply(typeReference: AbstractTypeReference): ScopedType = {
     new ScopedType(typeReference, Seq.empty)
   }
+
+  def apply(typeReference: AbstractTypeReference, methodDefinition: MethodDefinition): ScopedType = {
+    new ScopedType(typeReference, methodDefinition.genericTypes)
+  }
 }
