@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.{ParserRuleContext, Token}
 
 trait LocationUtils {
-  self: TestsContextParser =>
+  def location: Location
 
   def getLocationFromContext(context: ParserRuleContext): Location = {
     val internalRange = getRangeFromContext(context)

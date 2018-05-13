@@ -4,13 +4,24 @@ import definiti.common.ast.{Library, Location}
 import definiti.common.plugin.ContextPlugin
 import definiti.common.program.ProgramResult
 import definiti.common.validation.{Invalid, SimpleError, Valid, Validated}
+import definiti.tests.AST.Generator
 import definiti.tests.json.JsonAST
-import definiti.tests.parser.TestsContextParser
-import definiti.tests.validation.TestsValidation
+import definiti.tests.parser.{GeneratorsContextParser, TestsContextParser}
+import definiti.tests.validation.{GeneratorMeta, TestsValidation, ValidationContext}
 import spray.json._
 
 class TestsPlugin extends ContextPlugin[AST.TestsContext] {
   val configuration: Configuration = new FileConfiguration().load()
+
+  private val generatorFiles: Seq[String] = {
+    Seq("Boolean", "Date", "List", "Misc", "Number", "Option", "String")
+      .map(file => "generators/" + file + ".gen")
+  }
+
+  private lazy val coreGenerators: Validated[Seq[GeneratorMeta]] = {
+    Validated.squash(generatorFiles.map(file => new GeneratorsContextParser(file).parse()))
+      .map(_.flatten)
+  }
 
   override def name: String = "tests"
 
@@ -24,12 +35,16 @@ class TestsPlugin extends ContextPlugin[AST.TestsContext] {
   }
 
   override def validate(context: AST.TestsContext, library: Library): Validated[ProgramResult.NoResult] = {
-    val result = new TestsValidation(library, configuration).validate(context)
-    if (result.alerts.nonEmpty) {
-      Invalid(result.alerts.map(alert => SimpleError(alert.prettyPrint)))
-    } else {
-      Valid(ProgramResult.NoResult)
-    }
+    coreGenerators
+      .flatMap { generators =>
+        val validationContext = ValidationContext(context, library, generators)
+        val result = new TestsValidation(library, configuration).validate(validationContext)
+        if (result.alerts.nonEmpty) {
+          Invalid(result.alerts.map(alert => SimpleError(alert.prettyPrint)))
+        } else {
+          Valid(ProgramResult.NoResult)
+        }
+      }
   }
 
   override def contextToJson(context: AST.TestsContext): String = JsonAST.format.write(context).compactPrint

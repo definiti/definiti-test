@@ -1,0 +1,5 @@
+context tests {{{
+  generator anyStringRepeatedTwice(): String = anyString().repeat(2)
+
+  generator two(): Number = 2
+}}}

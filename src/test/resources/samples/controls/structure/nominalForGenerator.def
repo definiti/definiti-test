@@ -1,0 +1,11 @@
+type Person {
+  firstName: String
+  lastName: String
+}
+
+context tests {{{
+  generator anyPerson(): Person = Person {
+    firstName: "First"
+    lastName: "Last"
+  }
+}}}

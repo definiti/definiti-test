@@ -1,0 +1,7 @@
+generator List[A](elements: A*): List[A]
+
+generator listOf[A](elements: A): List[A]
+
+generator nonEmptyListOf[A](elements: A): List[A]
+
+generator boundedListOf[A](min: Number, max: Number, elements: A): List[A]

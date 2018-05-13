@@ -1,0 +1,9 @@
+type Person {
+  name: String
+}
+
+context tests {{{
+  generator anyPerson(): Person = Person {
+    name: ""
+  }
+}}}

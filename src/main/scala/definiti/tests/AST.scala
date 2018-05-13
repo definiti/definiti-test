@@ -4,7 +4,8 @@ import definiti.common.ast.Location
 
 object AST {
   case class TestsContext(
-    tests: Seq[Test]
+    tests: Seq[Test],
+    generators: Seq[Generator]
   )
 
   sealed trait Test
@@ -51,7 +52,7 @@ object AST {
 
   case class StringExpression(value: String, location: Location) extends Expression
 
-  case class ConstructorExpression(typ: Type, arguments: Seq[Expression], location: Location) extends Expression
+  case class GenerationExpression(name: String, generics: Seq[Type], arguments: Seq[Expression], location: Location) extends Expression
 
   case class Type(name: String, generics: Seq[Type]) {
     def readableString: String = {
@@ -70,4 +71,21 @@ object AST {
   case class StructureExpression(typ: Type, fields: Seq[Field], location: Location) extends Expression
 
   case class Field(name: String, expression: Expression, location: Location)
+
+  case class Generator(
+    name: String,
+    fullName: String,
+    generics: Seq[String],
+    typ: Type,
+    parameters: Seq[Parameter],
+    expression: Expression,
+    location: Location
+  )
+
+  case class Parameter(
+    name: String,
+    typ: Type,
+    isRest: Boolean,
+    location: Location
+  )
 }

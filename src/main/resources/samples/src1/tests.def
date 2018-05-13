@@ -111,6 +111,23 @@ context tests {{{
     refuse List[String]()
   }
 
+  generator phoneString(): String = numericStringOf(10, 10)
+
+  generator validPerson(): Person = Person {
+    firstName: nonEmptyString()
+    lastName: nonEmptyString()
+    phone: phoneString()
+  }
+
+  test type Person {
+    accept Person {
+      firstName: nonEmptyString()
+      lastName: nonEmptyString()
+      phone: phoneString()
+    }
+    accept validPerson()
+  }
+
   /* Not implemented yet:
 
   test type Person {

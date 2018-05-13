@@ -9,6 +9,7 @@ verification IsNonEmpty {
 
 context tests {{{
   test verification IsNonEmpty {
-    refuse Option[String, String]()
+    accept some[String](1)
+    refuse some[Number]("")
   }
 }}}

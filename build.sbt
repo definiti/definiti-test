@@ -22,11 +22,15 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:implicitConversio
 
 lazy val antlr = TaskKey[Unit]("antlr", "Build Antlr files")
 
+lazy val antlrTests = TaskKey[Unit]("antlrTests", "Build Antlr files for tests context")
+
+lazy val antlrGenerators = TaskKey[Unit]("antlrGenerators", "Build Antlr files for generators")
+
 lazy val classpathSeparator =
   if (sys.props("os.name").toLowerCase.contains("windows")) ";"
   else ":"
 
-antlr := {
+antlrTests := {
   import scala.sys.process._
 
   val log = streams.value.log
@@ -38,9 +42,29 @@ antlr := {
 
   val command = s"""java -cp "$classpath" $mainClass -o $destination -package $packageName $source"""
 
-  log.info("Building antlr Definiti files")
+  log.info("Building antlr tests files")
   command.!
 }
+
+antlrGenerators := {
+  import scala.sys.process._
+
+  val log = streams.value.log
+  val classpath = (dependencyClasspath in Compile).value.files.mkString(classpathSeparator)
+  val mainClass = "org.antlr.v4.Tool"
+  val destination = "src/main/java/definiti/tests/parser/antlr"
+  val packageName = "definiti.tests.parser.antlr"
+  val source = "src/main/antlr/Generators.g4"
+
+  val command = s"""java -cp "$classpath" $mainClass -o $destination -package $packageName $source"""
+
+  log.info("Building antlr generators files")
+  command.!
+}
+
+antlr := {}
+
+antlr := antlr.dependsOn(antlrTests, antlrGenerators).value
 
 compile in Compile := (compile in Compile).dependsOn(antlr).value
 

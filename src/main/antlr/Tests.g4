@@ -8,6 +8,7 @@ VERIFICATION : 'verification';
 TYPE         : 'type';
 ACCEPT       : 'accept';
 REFUSE       : 'refuse';
+GENERATOR    : 'generator';
 IDENTIFIER   : [a-zA-Z0-9]+;
 
 tests: toplevel*;
@@ -15,6 +16,7 @@ tests: toplevel*;
 toplevel
   : testVerification
   | testType
+  | generator
   ;
 
 testVerification:
@@ -31,6 +33,8 @@ testType:
   '}'
 ;
 
+generator: GENERATOR name=IDENTIFIER rawGenerics? parameters ':' type '=' expression;
+
 testCase:
   DOC_COMMENT?
   kind=(ACCEPT | REFUSE) testSubCase+;
@@ -41,19 +45,27 @@ expression
   : BOOLEAN
   | NUMBER
   | STRING
-  | constructor
+  | generation
   | structure
   ;
 
-constructor: type arguments;
+generation: name=IDENTIFIER generics? arguments;
 
 arguments
   : '(' ')'
   | '(' (expression ',')* expression ')'
   ;
 
+parameters
+  : '(' ')'
+  | '(' (parameter ',')* parameter ')'
+  ;
+parameter: IDENTIFIER ':' type;
+
 generics: '[' (type ',')* type ']';
 type: IDENTIFIER generics?;
+
+rawGenerics: '[' (IDENTIFIER ',')* IDENTIFIER ']';
 
 structure: type '{' field* '}';
 field: IDENTIFIER ':' expression;

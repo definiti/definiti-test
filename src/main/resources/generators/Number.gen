@@ -1,0 +1,7 @@
+generator anyNumber(): Number
+
+generator positiveNumber(): Number
+
+generator negativeNumber(): Number
+
+generator numberBetween(min: Number, max: Number): Number

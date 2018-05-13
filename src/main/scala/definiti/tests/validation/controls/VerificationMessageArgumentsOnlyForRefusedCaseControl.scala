@@ -3,19 +3,19 @@ package definiti.tests.validation.controls
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
-import definiti.tests.AST
 import definiti.tests.AST._
+import definiti.tests.validation.ValidationContext
 
-object VerificationMessageArgumentsOnlyForRefusedCaseControl extends Control[TestsContext] {
+object VerificationMessageArgumentsOnlyForRefusedCaseControl extends Control[ValidationContext] {
   override def description: String = "Control if message arguments are given only for 'accept' cases"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
-  override def control(context: AST.TestsContext, library: Library): ControlResult = {
-    context.testVerifications.map(controlTestVerification(_, context, library))
+  override def control(context: ValidationContext, library: Library): ControlResult = {
+    context.testVerifications.map(controlTestVerification)
   }
 
-  private def controlTestVerification(testVerification: TestVerification, context: TestsContext, library: Library): ControlResult = {
+  private def controlTestVerification(testVerification: TestVerification): ControlResult = {
     testVerification.cases.map(controlTestCase)
   }
 

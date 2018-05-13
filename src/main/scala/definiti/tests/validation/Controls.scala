@@ -1,18 +1,19 @@
 package definiti.tests.validation
 
 import definiti.common.control.Control
-import definiti.tests.AST.TestsContext
 import definiti.tests.validation.controls._
 
 object Controls {
-  val all: Seq[Control[TestsContext]] = Seq(
+  val all: Seq[Control[ValidationContext]] = Seq(
+    ExpressionTypeOfGeneratorControl,
     InputTypeForTypeTestControl,
     InputTypeForVerificationTestControl,
     StructureControl,
     SubCaseVerificationMessageTypesControl,
     SubCaseVerificationReferenceTypesControl,
+    TypeReferenceForGeneratorControl,
     TypeReferenceForTypeTestControl,
-    ValidConstructorControl,
+    ValidGenerationControl,
     ValidExpressionTypeControl,
     VerificationMessageArgumentsOnlyForRefusedCaseControl,
     VerificationReferenceForVerificationTestControl

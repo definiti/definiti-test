@@ -22,17 +22,29 @@ class ValidExpressionTypeControlSpec extends EndToEndSpec {
     output shouldBe ok[Root]
   }
 
+  it should "validate valid nominal type for generator" in {
+    val output = processFile("controls.validExpressionType.nominalForGenerator", configuration)
+    output shouldBe ok[Root]
+  }
+
   it should "invalidate unknown type" in {
     val output = processFile("controls.validExpressionType.invalidType", configuration)
     output should beResult(Ko[Root](
-      ValidExpressionTypeControl.invalidType(Type("Unknown"), invalidTypeLocation(12, 12, 21))
+      ValidExpressionTypeControl.invalidType(Type("Any"), invalidTypeLocation(12, 12, 21))
     ))
   }
 
   it should "invalidate unknown type for type tests" in {
     val output = processFile("controls.validExpressionType.invalidTypeForType", configuration)
     output should beResult(Ko[Root](
-      ValidExpressionTypeControl.invalidType(Type("Unknown"), invalidTypeForTypeLocation(9, 12, 21))
+      ValidExpressionTypeControl.invalidType(Type("Any"), invalidTypeForTypeLocation(9, 12, 21))
+    ))
+  }
+
+  it should "invalidate unknown type for generators" in {
+    val output = processFile("controls.validExpressionType.invalidTypeForGenerator", configuration)
+    output should beResult(Ko[Root](
+      ValidExpressionTypeControl.invalidType(Type("Any"), invalidTypeForGeneratorLocation(8, 33, 42))
     ))
   }
 
@@ -48,13 +60,6 @@ class ValidExpressionTypeControlSpec extends EndToEndSpec {
       ValidExpressionTypeControl.invalidType(listOf(listOf("Unknown")), invalidListLocation(13, 12, 33))
     ))
   }
-
-  it should "invalidate type with invalid number of generics" in {
-    val output = processFile("controls.validExpressionType.invalidGenericNumber", configuration)
-    output should beResult(Ko[Root](
-      ValidExpressionTypeControl.invalidType(Type("Option", Type("String"), Type("String")), invalidGenericNumberLocation(12, 12, 36))
-    ))
-  }
 }
 
 object ValidExpressionTypeControlSpec {
@@ -62,6 +67,7 @@ object ValidExpressionTypeControlSpec {
 
   val invalidTypeLocation = LocationPath.control(ValidExpressionTypeControl, "invalidType")
   val invalidTypeForTypeLocation = LocationPath.control(ValidExpressionTypeControl, "invalidTypeForType")
+  val invalidTypeForGeneratorLocation = LocationPath.control(ValidExpressionTypeControl, "invalidTypeForGenerator")
   val invalidListLocation = LocationPath.control(ValidExpressionTypeControl, "invalidList")
   val invalidGenericNumberLocation = LocationPath.control(ValidExpressionTypeControl, "invalidGenericNumber")
 }

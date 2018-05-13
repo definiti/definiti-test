@@ -4,33 +4,34 @@ import definiti.common.ast.{Expression => _, _}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.AST._
+import definiti.tests.validation.ValidationContext
 import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
 
-object SubCaseVerificationMessageTypesControl extends Control[TestsContext] {
+object SubCaseVerificationMessageTypesControl extends Control[ValidationContext] {
   override def description: String = "Control that sub case to a verification have the right message types ('as' part)"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
-  override def control(context: TestsContext, library: Library): ControlResult = {
+  override def control(context: ValidationContext, library: Library): ControlResult = {
     context.testVerifications.map(controlTestVerification(_, context, library))
   }
 
-  private def controlTestVerification(testVerification: TestVerification, context: TestsContext, library: Library): ControlResult = {
+  private def controlTestVerification(testVerification: TestVerification, context: ValidationContext, library: Library): ControlResult = {
     library.verificationsMap
       .get(testVerification.verification)
       .map { verification =>
         ControlResult.squash {
-          testVerification.cases.map(controlTestCase(_, verification))
+          testVerification.cases.map(controlTestCase(_, verification, context))
         }
       }
       .getOrElse(ignored)
   }
 
-  private def controlTestCase(testCase: Case, verification: Verification): ControlResult = {
-    testCase.subCases.map(controlTestSubCase(_, verification))
+  private def controlTestCase(testCase: Case, verification: Verification, context: ValidationContext): ControlResult = {
+    testCase.subCases.map(controlTestSubCase(_, verification, context))
   }
 
-  private def controlTestSubCase(subCase: SubCase, verification: Verification): ControlResult = {
+  private def controlTestSubCase(subCase: SubCase, verification: Verification, context: ValidationContext): ControlResult = {
     if (subCase.messageArguments.isEmpty) {
       // The emptiness means the developer does not want to check returned values of message
       ControlResult.OK
@@ -39,24 +40,24 @@ object SubCaseVerificationMessageTypesControl extends Control[TestsContext] {
         case _: LiteralMessage =>
           invalidNumberOfParameters(0, subCase.messageArguments.length, subCase.location)
         case typedMessage: TypedMessage =>
-          controlWithTypedMessage(subCase, typedMessage)
+          controlWithTypedMessage(subCase, typedMessage, context)
       }
     }
   }
 
-  private def controlWithTypedMessage(subCase: SubCase, typedMessage: TypedMessage): ControlResult = {
+  private def controlWithTypedMessage(subCase: SubCase, typedMessage: TypedMessage, context: ValidationContext): ControlResult = {
     if (typedMessage.types.length == subCase.messageArguments.length) {
       typedMessage.types.zip(subCase.messageArguments)
         .map { case (messageParameterType, caseArgument) =>
-          controlExpression(caseArgument, ScopedType(messageParameterType))
+          controlExpression(caseArgument, ScopedType(messageParameterType), context)
         }
     } else {
       invalidNumberOfParameters(typedMessage.types.length, subCase.messageArguments.length, subCase.location)
     }
   }
 
-  private def controlExpression(expression: Expression, scopedType: ScopedType): ControlResult = {
-    if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression))) {
+  private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
+    if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression, context))) {
       ControlResult.OK
     } else {
       invalidType(scopedType.typeReference, expression.location)

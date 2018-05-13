@@ -33,4 +33,12 @@ private[tests] object CollectionUtils {
   def javaList[A](seq: Seq[A]): java.util.List[A] = {
     new java.util.ArrayList[A](seq.asJava)
   }
+
+  def fill[A](seq: Seq[A], defaultElement: A, size: Int): Seq[A] = {
+    if (seq.length >= size) {
+      seq
+    } else {
+      seq ++ Seq.fill(size - seq.length)(defaultElement)
+    }
+  }
 }

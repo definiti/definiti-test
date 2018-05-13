@@ -1,0 +1,5 @@
+generator anyDate(): Date
+
+generator passedDate(): Date
+
+generator futureDate(): Date

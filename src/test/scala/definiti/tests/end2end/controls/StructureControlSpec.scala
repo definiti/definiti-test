@@ -21,6 +21,11 @@ class StructureControlSpec extends EndToEndSpec {
     output shouldBe ok[Root]
   }
 
+  it should "validate valid structure for generator" in {
+    val output = processFile("controls.structure.nominalForGenerator", configuration)
+    output shouldBe ok[Root]
+  }
+
   it should "invalidate a structure missing a field for verification" in {
     val output = processFile("controls.structure.fieldMissing", configuration)
     output should beResult(Ko[Root](
@@ -34,6 +39,14 @@ class StructureControlSpec extends EndToEndSpec {
     output should beResult(Ko[Root](
       StructureControl.fieldMissing("lastName", Type("x.Person"), fieldMissingForTypeLocation(10, 12, 12, 6)),
       StructureControl.fieldMissing("firstName", Type("x.Person"), fieldMissingForTypeLocation(14, 12, 16, 6))
+    ))
+  }
+
+  it should "invalidate a structure missing a field for generators" in {
+    val output = processFile("controls.structure.fieldMissingForGenerator", configuration)
+    output should beResult(Ko[Root](
+      StructureControl.fieldMissing("lastName", Type("x.Person"), fieldMissingForGeneratorLocation(9, 33, 11, 4)),
+      StructureControl.fieldMissing("firstName", Type("x.Person"), fieldMissingForGeneratorLocation(13, 40, 15, 4))
     ))
   }
 
@@ -80,6 +93,7 @@ object StructureControlSpec {
 
   val fieldMissingLocation = LocationPath.control(StructureControl, "fieldMissing")
   val fieldMissingForTypeLocation = LocationPath.control(StructureControl, "fieldMissingForType")
+  val fieldMissingForGeneratorLocation = LocationPath.control(StructureControl, "fieldMissingForGenerator")
   val fieldAddedLocation = LocationPath.control(StructureControl, "fieldAdded")
   val invalidFieldTypeLocation = LocationPath.control(StructureControl, "invalidFieldType")
   val invalidNestedTypeLocation = LocationPath.control(StructureControl, "invalidNestedType")

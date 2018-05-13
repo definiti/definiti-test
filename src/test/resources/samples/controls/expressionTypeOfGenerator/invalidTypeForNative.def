@@ -1,0 +1,5 @@
+context tests {{{
+  generator anyNumber(): Number = anyString()
+
+  generator anyString(): String = 0
+}}}

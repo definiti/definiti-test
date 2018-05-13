@@ -1,0 +1,29 @@
+generator anyChar(): String
+
+generator anyString(): String
+
+generator alphaChar(): String
+
+generator alphaString(): String
+
+generator numericChar(): String
+
+generator numericString(): String
+
+generator alphaNumericString(): String
+
+generator nonEmptyString(): String
+
+generator nonEmptyAlphaString(): String
+
+generator nonEmptyNumericString(): String
+
+generator nonEmptyAlphaNumericString(): String
+
+generator stringOf(min: Number, max: Number): String
+
+generator alphaStringOf(min: Number, max: Number): String
+
+generator numericStringOf(min: Number, max: Number): String
+
+generator alphaNumericStringOf(min: Number, max: Number): String

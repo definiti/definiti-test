@@ -1,6 +1,7 @@
 package definiti.tests.parser
 
 import definiti.common.ast.Location
+import definiti.common.utils.StringUtils
 import definiti.common.validation.{Invalid, Valid, Validated}
 import definiti.tests.AST.{TestsContext => TestsContextAST, _}
 import definiti.tests.parser.antlr.TestsParser._
@@ -38,134 +39,19 @@ class TestsContextParser(packageName: String, imports: Map[String, String], val 
     parser
   }
 
-  private def toAST(context: TestsContext): TestsContextAST = {
-    val tests = ListBuffer[Test]()
-
-    CollectionUtils.scalaSeq(context.toplevel()).foreach { element =>
-      appendIfDefined(element.testVerification(), tests, processTestVerification)
-      appendIfDefined(element.testType(), tests, processTestType)
-    }
-
-    TestsContextAST(
-      tests = List(tests: _*)
-    )
-  }
-
-  private def appendIfDefined[A, B](element: A, buffer: ListBuffer[B], transformer: A => B): Unit = {
-    if (element != null) {
-      buffer.append(transformer(element))
-    }
-  }
-
-  private def processTestVerification(context: TestVerificationContext): TestVerification = {
-    TestVerification(
-      verification = nameWithImport(context.IDENTIFIER().getText),
-      cases = CollectionUtils.scalaSeq(context.testCase()).map(processTestCase),
-      comment = extractDocComment(context.DOC_COMMENT()),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processTestType(context: TestTypeContext): TestType = {
-    TestType(
-      typ = processType(context.`type`()),
-      cases = CollectionUtils.scalaSeq(context.testCase()).map(processTestCase),
-      comment = extractDocComment(context.DOC_COMMENT()),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processTestCase(context: TestCaseContext): Case = {
-    Case(
-      kind = CaseKind.withName(context.kind.getText),
-      subCases = CollectionUtils.scalaSeq(context.testSubCase()).map(processTestSubCase),
-      comment = extractDocComment(context.DOC_COMMENT()),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processExpression(context: ExpressionContext): Expression = {
-    val location = getLocationFromContext(context)
-    val booleanOpt = Option(context.BOOLEAN()).map(boolean => BooleanExpression(boolean.getText == "true", location))
-    val numberOpt = Option(context.NUMBER()).map(number => NumberExpression(BigDecimal(number.getText), location))
-    val stringOpt = Option(context.STRING()).map(string => StringExpression(string.getText, location))
-    val constructorOpt = Option(context.constructor()).map(processConstructor)
-    val structureOpt = Option(context.structure()).map(processStructure)
-
-    booleanOpt
-      .orElse(numberOpt)
-      .orElse(stringOpt)
-      .orElse(constructorOpt)
-      .orElse(structureOpt)
-      .getOrElse {
-        // Should not happen because all cases have been processed.
-        // Defensive coding when adding types.
-        throw new RuntimeException(s"Unknown expression ${context}")
+  private def toAST(testsContext: TestsContext): TestsContextAST = {
+    val internalImports = ListBuffer[(String, String)]()
+    CollectionUtils.scalaSeq(testsContext.toplevel()).foreach { topLevel =>
+      Option(topLevel.generator()).foreach { generator =>
+        val name = generator.IDENTIFIER().getText
+        val fullName = StringUtils.canonical(packageName, name)
+        internalImports.append(name -> fullName)
       }
-  }
-
-  private def processConstructor(context: ConstructorContext): Expression = {
-    ConstructorExpression(
-      typ = processType(context.`type`()),
-      arguments = processArguments(context.arguments()),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processType(context: TypeContext): Type = {
-    Type(
-      name = nameWithImport(context.IDENTIFIER().getText),
-      generics = Option(context.generics()).map(processGenerics).getOrElse(Seq.empty)
-    )
-  }
-
-  private def processGenerics(context: GenericsContext): Seq[Type] = {
-    CollectionUtils.scalaSeq(context.`type`()).map(processType)
-  }
-
-  private def processStructure(context: StructureContext): Expression = {
-    StructureExpression(
-      typ = processType(context.`type`()),
-      fields = CollectionUtils.scalaSeq(context.field()).map(processField),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processField(context: FieldContext): Field = {
-    Field(
-      name = context.IDENTIFIER().getText,
-      expression = processExpression(context.expression()),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processTestSubCase(context: TestSubCaseContext): SubCase = {
-    SubCase(
-      expression = processExpression(context.expression()),
-      arguments = Option(context.withArguments).map(processArguments).getOrElse(Seq.empty),
-      messageArguments = Option(context.asArguments).map(processArguments).getOrElse(Seq.empty),
-      location = getLocationFromContext(context)
-    )
-  }
-
-  private def processArguments(context: ArgumentsContext): Seq[Expression] = {
-    CollectionUtils.scalaSeq(context.expression()).map(processExpression)
-  }
-
-  private def extractDocComment(node: TerminalNode): Option[String] = {
-    Option(node).map(_.getText).map { content =>
-      var temporaryResult = content
-      if (temporaryResult.startsWith("/**")) {
-        temporaryResult = temporaryResult.substring(3)
-      }
-      if (temporaryResult.endsWith("*/")) {
-        temporaryResult = temporaryResult.substring(0, temporaryResult.length - 2)
-      }
-      temporaryResult
     }
-  }
-
-  private def nameWithImport(name: String): String = {
-    imports.getOrElse(name, name)
+    new AntlrToAstAdapter(
+      packageName = packageName,
+      imports = imports ++ internalImports.toMap,
+      location = location
+    ).toAST(testsContext)
   }
 }
