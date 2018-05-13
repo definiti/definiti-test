@@ -5,8 +5,8 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.AST._
 import definiti.tests.utils.CollectionUtils
-import definiti.tests.validation.{GeneratorMeta, ValidationContext}
 import definiti.tests.validation.helpers.{ExpressionTypes, Types}
+import definiti.tests.validation.{GeneratorMeta, ValidationContext}
 
 object ValidGenerationControl extends Control[ValidationContext] {
   override def description: String = "Check if generation expressions are valid"
@@ -14,18 +14,13 @@ object ValidGenerationControl extends Control[ValidationContext] {
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: ValidationContext, library: Library): ControlResult = {
-    extractGenerationExpressions(context)
-      .map(controlGenerationExpression(_, context))
-  }
-
-  private def extractGenerationExpressions(context: ValidationContext): Seq[GenerationExpression] = {
     context.extractExpressions {
       case generationExpression: GenerationExpression => generationExpression
-    }
+    }.map(controlGenerationExpression(_, context))
   }
 
   private def controlGenerationExpression(expression: GenerationExpression, context: ValidationContext): ControlResult = {
-    context.generators.find(_.fullName == expression.name)
+    context.getGenerator(expression.name)
       .map(controlGenerationWithGenerator(expression, _, context))
       .getOrElse(unknownGenerator(expression.name, expression.location))
   }

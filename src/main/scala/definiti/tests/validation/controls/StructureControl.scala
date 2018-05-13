@@ -19,7 +19,7 @@ object StructureControl extends Control[ValidationContext] {
   }
 
   private def controlStructure(structureExpression: StructureExpression, context: ValidationContext): ControlResult = {
-    context.library.definedTypes.find(_.fullName == structureExpression.typ.name) match {
+    context.getDefinedType(structureExpression.typ.name) match {
       case Some(definedType) =>
         ControlResult.squash {
           Seq(

@@ -17,8 +17,7 @@ object InputTypeForVerificationTestControl extends Control[ValidationContext] {
   }
 
   private def controlTestVerification(testVerification: TestVerification, context: ValidationContext): ControlResult = {
-    context.library.verificationsMap
-      .get(testVerification.verification)
+    context.getVerification(testVerification.verification)
       .map { verification =>
         ControlResult.squash {
           testVerification.cases.map(controlTestCase(_, verification, context))
@@ -29,9 +28,7 @@ object InputTypeForVerificationTestControl extends Control[ValidationContext] {
 
   private def controlTestCase(testCase: Case, verification: Verification, context: ValidationContext): ControlResult = {
     val typeReference = verification.function.parameters.head.typeReference
-    ControlResult.squash {
-      testCase.subCases.map(subCase => controlExpression(subCase.expression, ScopedType(typeReference, verification), context))
-    }
+    testCase.subCases.map(subCase => controlExpression(subCase.expression, ScopedType(typeReference, verification), context))
   }
 
   private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {

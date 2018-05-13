@@ -13,12 +13,11 @@ object SubCaseVerificationMessageTypesControl extends Control[ValidationContext]
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: ValidationContext, library: Library): ControlResult = {
-    context.testVerifications.map(controlTestVerification(_, context, library))
+    context.testVerifications.map(controlTestVerification(_, context))
   }
 
-  private def controlTestVerification(testVerification: TestVerification, context: ValidationContext, library: Library): ControlResult = {
-    library.verificationsMap
-      .get(testVerification.verification)
+  private def controlTestVerification(testVerification: TestVerification, context: ValidationContext): ControlResult = {
+    context.getVerification(testVerification.verification)
       .map { verification =>
         ControlResult.squash {
           testVerification.cases.map(controlTestCase(_, verification, context))

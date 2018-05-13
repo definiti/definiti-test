@@ -1,5 +1,6 @@
 package definiti.tests.validation
 
+import definiti.common.ast.{ClassDefinition, DefinedType, Verification}
 import definiti.tests.AST._
 
 package object controls {
@@ -57,6 +58,34 @@ package object controls {
         case other =>
           Seq(other)
       }
+    }
+
+    def getVerification(verificationName: String): Option[Verification] = {
+      validationContext.library.verificationsMap.get(verificationName)
+    }
+
+    def hasVerification(verificationName: String): Boolean = {
+      validationContext.library.verificationsMap.contains(verificationName)
+    }
+
+    def getClassDefinition(typeName: String): Option[ClassDefinition] = {
+      validationContext.library.typesMap.get(typeName)
+    }
+
+    def getDefinedType(typeName: String): Option[DefinedType] = {
+      validationContext.library.typesMap
+        .get(typeName)
+        .collect {
+          case definedType: DefinedType => definedType
+        }
+    }
+
+    def hasType(typeName: String): Boolean = {
+      validationContext.library.typesMap.contains(typeName)
+    }
+
+    def getGenerator(generatorName: String): Option[GeneratorMeta] = {
+      validationContext.generators.find(_.fullName == generatorName)
     }
   }
 

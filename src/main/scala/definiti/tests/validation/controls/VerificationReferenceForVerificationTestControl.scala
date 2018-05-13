@@ -16,7 +16,7 @@ object VerificationReferenceForVerificationTestControl extends Control[Validatio
   }
 
   private def controlTestVerification(testVerification: TestVerification, context: ValidationContext): ControlResult = {
-    if (context.library.verificationsMap.contains(testVerification.verification)) {
+    if (context.hasVerification(testVerification.verification)) {
       ControlResult.OK
     } else {
       unknownReference(testVerification.verification, testVerification.location)

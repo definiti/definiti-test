@@ -12,19 +12,11 @@ object VerificationMessageArgumentsOnlyForRefusedCaseControl extends Control[Val
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: ValidationContext, library: Library): ControlResult = {
-    context.testVerifications.map(controlTestVerification)
-  }
-
-  private def controlTestVerification(testVerification: TestVerification): ControlResult = {
-    testVerification.cases.map(controlTestCase)
-  }
-
-  private def controlTestCase(testCase: Case): ControlResult = {
-    if (testCase.kind == CaseKind.refuse) {
-      ControlResult.OK
-    } else {
-      testCase.subCases.map(controlSubCaseOnAccept)
-    }
+    context.testVerifications
+      .flatMap(_.cases)
+      .filter(_.kind == CaseKind.accept)
+      .flatMap(_.subCases)
+      .map(controlSubCaseOnAccept)
   }
 
   private def controlSubCaseOnAccept(subCase: SubCase): ControlResult = {

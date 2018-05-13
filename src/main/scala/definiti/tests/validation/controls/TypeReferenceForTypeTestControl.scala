@@ -12,16 +12,14 @@ object TypeReferenceForTypeTestControl extends Control[ValidationContext] {
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: ValidationContext, library: Library): ControlResult = {
-    context.testTypes.map(controlTestType(_, context))
-  }
-
-  private def controlTestType(testType: TestType, context: ValidationContext): ControlResult = {
-    controlType(testType.typ, testType.location, context)
+    context.testTypes.map { testType =>
+      controlType(testType.typ, testType.location, context)
+    }
   }
 
   private def controlType(typ: Type, location: Location, context: ValidationContext): ControlResult = {
-    if (context.library.typesMap.contains(typ.name)) {
-      ControlResult.squash(typ.generics.map(controlType(_, location, context)))
+    if (context.hasType(typ.name)) {
+      typ.generics.map(controlType(_, location, context))
     } else {
       unknownReference(typ, location)
     }

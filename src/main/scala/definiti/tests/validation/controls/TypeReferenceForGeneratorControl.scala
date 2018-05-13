@@ -12,16 +12,14 @@ object TypeReferenceForGeneratorControl extends Control[ValidationContext] {
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
   override def control(context: ValidationContext, library: Library): ControlResult = {
-    context.context.generators.map(controlGenerator(_, context))
-  }
-
-  private def controlGenerator(generator: Generator, context: ValidationContext): ControlResult = {
-    controlType(generator.typ, generator, context)
+    context.context.generators.map { generator =>
+      controlType(generator.typ, generator, context)
+    }
   }
 
   private def controlType(typ: Type, generator: Generator, context: ValidationContext): ControlResult = {
-    if (generator.generics.contains(typ.name) || context.library.typesMap.contains(typ.name)) {
-      ControlResult.squash(typ.generics.map(controlType(_, generator, context)))
+    if (generator.generics.contains(typ.name) || context.hasType(typ.name)) {
+      typ.generics.map(controlType(_, generator, context))
     } else {
       unknownReference(typ, generator.location)
     }

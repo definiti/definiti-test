@@ -18,8 +18,7 @@ object SubCaseVerificationReferenceTypesControl extends Control[ValidationContex
   }
 
   private def controlTestVerification(testVerification: TestVerification, context: ValidationContext): ControlResult = {
-    context.library.verificationsMap
-      .get(testVerification.verification)
+    context.getVerification(testVerification.verification)
       .map { verification =>
         ControlResult.squash {
           testVerification.cases.map(controlTestCase(_, verification, context))

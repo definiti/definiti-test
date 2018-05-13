@@ -27,15 +27,11 @@ object ValidExpressionTypeControl extends Control[ValidationContext] {
   }
 
   private def isTypeValid(typ: Type, context: ValidationContext): Boolean = {
-    context.library.typesMap.get(typ.name) match {
-      case Some(classDefinition) =>
-        if (typ.generics.length == classDefinition.genericTypes.length) {
+    context.getClassDefinition(typ.name)
+      .exists { classDefinition =>
+        typ.generics.length == classDefinition.genericTypes.length &&
           typ.generics.forall(isTypeValid(_, context))
-        } else {
-          false
-        }
-      case None => false
-    }
+      }
   }
 
   def invalidType(typ: Type, location: Location): Alert = {
