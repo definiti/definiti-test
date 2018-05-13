@@ -1,11 +1,11 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.generator
 
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast.{Generator, Type}
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.ExpressionTypes
+import definiti.tests.validation.helpers.Types
 
 object ExpressionTypeOfGeneratorControl extends Control[ValidationContext] {
   override def description: String = "Control that the expression of generator matches its declaration"
@@ -17,7 +17,7 @@ object ExpressionTypeOfGeneratorControl extends Control[ValidationContext] {
   }
 
   private def controlGenerator(generator: Generator, context: ValidationContext): ControlResult = {
-    val expressionType = ExpressionTypes.getTypeOfExpression(generator.expression, context)
+    val expressionType = Types.getTypeOfExpression(generator.expression, context)
     if (expressionType == generator.typ) {
       ControlResult.OK
     } else {

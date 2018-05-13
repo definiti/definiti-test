@@ -1,14 +1,14 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.verificationTest
 
-import definiti.common.ast.{Expression => _, _}
+import definiti.common.ast._
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
-import definiti.tests.ast._
+import definiti.tests.ast.{Case, Expression, SubCase, TestVerification}
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
+import definiti.tests.validation.helpers.{ScopedType, Types}
 
-object SubCaseVerificationMessageTypesControl extends Control[ValidationContext] {
-  override def description: String = "Control that sub case to a verification have the right message types ('as' part)"
+object SubCaseVerificationReferenceTypesControl extends Control[ValidationContext] {
+  override def description: String = "Control that sub case to a verification have the right input types"
 
   override def defaultLevel: ControlLevel.Value = ControlLevel.error
 
@@ -31,32 +31,18 @@ object SubCaseVerificationMessageTypesControl extends Control[ValidationContext]
   }
 
   private def controlTestSubCase(subCase: SubCase, verification: Verification, context: ValidationContext): ControlResult = {
-    if (subCase.messageArguments.isEmpty) {
-      // The emptiness means the developer does not want to check returned values of message
-      ControlResult.OK
-    } else {
-      verification.message match {
-        case _: LiteralMessage =>
-          invalidNumberOfParameters(0, subCase.messageArguments.length, subCase.location)
-        case typedMessage: TypedMessage =>
-          controlWithTypedMessage(subCase, typedMessage, context)
-      }
-    }
-  }
-
-  private def controlWithTypedMessage(subCase: SubCase, typedMessage: TypedMessage, context: ValidationContext): ControlResult = {
-    if (typedMessage.types.length == subCase.messageArguments.length) {
-      typedMessage.types.zip(subCase.messageArguments)
-        .map { case (messageParameterType, caseArgument) =>
-          controlExpression(caseArgument, ScopedType(messageParameterType), context)
+    if (verification.parameters.length == subCase.arguments.length) {
+      verification.parameters.zip(subCase.arguments)
+        .map { case (verificationParameter, caseArgument) =>
+          controlExpression(caseArgument, ScopedType(verificationParameter.typeReference, verification), context)
         }
     } else {
-      invalidNumberOfParameters(typedMessage.types.length, subCase.messageArguments.length, subCase.location)
+      invalidNumberOfParameters(verification.parameters.length, subCase.arguments.length, subCase.location)
     }
   }
 
   private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
-    if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression, context))) {
+    if (scopedType.isSameAs(Types.getTypeOfExpression(expression, context))) {
       ControlResult.OK
     } else {
       invalidType(scopedType.typeReference, expression.location)
@@ -64,7 +50,7 @@ object SubCaseVerificationMessageTypesControl extends Control[ValidationContext]
   }
 
   def invalidNumberOfParameters(expectedNumber: Int, gotNumber: Int, location: Location): Alert = {
-    alert(s"The number of parameters for message verification does not match (expected: ${expectedNumber}, got: ${gotNumber})", location)
+    alert(s"The number of parameters for verification does not match (expected: ${expectedNumber}, got: ${gotNumber})", location)
   }
 
   def invalidType(expectedType: AbstractTypeReference, location: Location): Alert = {

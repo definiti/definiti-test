@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.Logger
 import definiti.common.control.ControlLevel
 import definiti.common.program.ProgramConfiguration
 import definiti.common.utils.CollectionUtils.scalaSeq
-import definiti.tests.validation.Controls
+import definiti.tests.validation.controls.Controls
 
 case class Configuration(
   programConfiguration: ProgramConfiguration

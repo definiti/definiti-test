@@ -1,4 +1,4 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.expression
 
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
@@ -6,7 +6,7 @@ import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.utils.CollectionUtils
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ExpressionTypes, Types}
+import definiti.tests.validation.helpers.Types
 
 object ValidGenerationControl extends Control[ValidationContext] {
   override def description: String = "Check if generation expressions are valid"
@@ -46,7 +46,7 @@ object ValidGenerationControl extends Control[ValidationContext] {
     generation.arguments
       .zip(CollectionUtils.fill(generator.parameters.map(_.typ), lastType, generation.arguments.size))
       .map { case (expression, parameterType) =>
-        val expressionType = ExpressionTypes.getTypeOfExpression(expression, context)
+        val expressionType = Types.getTypeOfExpression(expression, context)
         val genericReplacements = generator.generics.zip(generation.generics).toMap
         val parameterTypeWithReplacedGenerics = Types.replaceGenerics(parameterType, genericReplacements)
         if (Types.finalType(expressionType, context) == Types.finalType(parameterTypeWithReplacedGenerics, context)) {

@@ -1,4 +1,4 @@
-package definiti.tests.end2end.controls
+package definiti.tests.end2end.controls.expression
 
 import definiti.common.ast.Root
 import definiti.common.program.Ko
@@ -6,38 +6,38 @@ import definiti.common.tests.LocationPath
 import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.utils.CommonTypes._
-import definiti.tests.validation.controls.ValidGenerationControl
+import definiti.tests.validation.controls.expression.ValidGenerationControl
 
 class ValidGenerationControlSpec extends EndToEndSpec {
   import ValidGenerationControlSpec._
 
   "TestsValidation" should "validate valid List constructor" in {
-    val output = processFile("controls.validGeneration.nominalList", configuration)
+    val output = processFile("controls.expression.validGeneration.nominalList", configuration)
     output shouldBe ok[Root]
   }
 
   it should "validate valid List constructor for types" in {
-    val output = processFile("controls.validGeneration.nominalListForType", configuration)
+    val output = processFile("controls.expression.validGeneration.nominalListForType", configuration)
     output shouldBe ok[Root]
   }
 
   it should "validate valid Option constructor" in {
-    val output = processFile("controls.validGeneration.nominalOption", configuration)
+    val output = processFile("controls.expression.validGeneration.nominalOption", configuration)
     output shouldBe ok[Root]
   }
 
   it should "validate valid deep List constructor" in {
-    val output = processFile("controls.validGeneration.validDeepTypeForList", configuration)
+    val output = processFile("controls.expression.validGeneration.validDeepTypeForList", configuration)
     output shouldBe ok[Root]
   }
 
   it should "validate valid deep Option constructor" in {
-    val output = processFile("controls.validGeneration.validDeepTypeForOption", configuration)
+    val output = processFile("controls.expression.validGeneration.validDeepTypeForOption", configuration)
     output shouldBe ok[Root]
   }
 
   it should "invalidate Option with more than two arguments" in {
-    val output = processFile("controls.validGeneration.invalidNumberOfArgumentsForOption", configuration)
+    val output = processFile("controls.expression.validGeneration.invalidNumberOfArgumentsForOption", configuration)
     output should beResult(Ko[Root](
       ValidGenerationControl.invalidNumberOfArgument(1, 2, invalidNumberOfArgumentsForOptionLocation(12, 12, 32)),
       ValidGenerationControl.invalidNumberOfArgument(1, 5, invalidNumberOfArgumentsForOptionLocation(13, 12, 44))
@@ -45,7 +45,7 @@ class ValidGenerationControlSpec extends EndToEndSpec {
   }
 
   it should "invalidate an Option with invalid direct type" in {
-    val output = processFile("controls.validGeneration.invalidDirectTypeForOption", configuration)
+    val output = processFile("controls.expression.validGeneration.invalidDirectTypeForOption", configuration)
     output should beResult(Ko[Root](
       ValidGenerationControl.unexpectedType(string, number, invalidDirectTypeForOptionLocation(12, 25, 26)),
       ValidGenerationControl.unexpectedType(number, string, invalidDirectTypeForOptionLocation(13, 25, 27))
@@ -53,7 +53,7 @@ class ValidGenerationControlSpec extends EndToEndSpec {
   }
 
   it should "invalidate a List with invalid direct type" in {
-    val output = processFile("controls.validGeneration.invalidDirectTypeForList", configuration)
+    val output = processFile("controls.expression.validGeneration.invalidDirectTypeForList", configuration)
     output should beResult(Ko[Root](
       ValidGenerationControl.unexpectedType(string, number, invalidDirectTypeForListLocation(12, 25, 26)),
       ValidGenerationControl.unexpectedType(number, string, invalidDirectTypeForListLocation(13, 25, 27)),
@@ -64,7 +64,7 @@ class ValidGenerationControlSpec extends EndToEndSpec {
   }
 
   it should "invalidate a List with invalid direct type for types" in {
-    val output = processFile("controls.validGeneration.invalidDirectTypeForListForType", configuration)
+    val output = processFile("controls.expression.validGeneration.invalidDirectTypeForListForType", configuration)
     output should beResult(Ko[Root](
       ValidGenerationControl.unexpectedType(string, number, invalidDirectTypeForListForTypeLocation(10, 27, 28)),
       ValidGenerationControl.unexpectedType(number, string, invalidDirectTypeForListForTypeLocation(13, 27, 29)),
@@ -75,7 +75,7 @@ class ValidGenerationControlSpec extends EndToEndSpec {
   }
 
   it should "invalidate an Option with invalid deep type" in {
-    val output = processFile("controls.validGeneration.invalidDeepTypeForOption", configuration)
+    val output = processFile("controls.expression.validGeneration.invalidDeepTypeForOption", configuration)
     output should beResult(Ko[Root](
       ValidGenerationControl.unexpectedType(optionOf(string), optionOf(number), invalidDeepTypeForOptionLocation(12, 33, 48)),
       ValidGenerationControl.unexpectedType(string, number, invalidDeepTypeForOptionLocation(13, 46, 47)),
@@ -85,7 +85,7 @@ class ValidGenerationControlSpec extends EndToEndSpec {
   }
 
   it should "invalidate a List with invalid deep type" in {
-    val output = processFile("controls.validGeneration.invalidDeepTypeForList", configuration)
+    val output = processFile("controls.expression.validGeneration.invalidDeepTypeForList", configuration)
     output should beResult(Ko[Root](
       ValidGenerationControl.unexpectedType(listOf(number), listOf(string), invalidDeepTypeForListLocation(12, 31, 47)),
       ValidGenerationControl.unexpectedType(number, string, invalidDeepTypeForListLocation(12, 62, 64)),
@@ -104,10 +104,11 @@ class ValidGenerationControlSpec extends EndToEndSpec {
 object ValidGenerationControlSpec {
   val configuration = ConfigurationBuilder().withOnlyControls(ValidGenerationControl).build()
 
-  val invalidNumberOfArgumentsForOptionLocation = LocationPath.control(ValidGenerationControl, "invalidNumberOfArgumentsForOption")
-  val invalidDirectTypeForOptionLocation = LocationPath.control(ValidGenerationControl, "invalidDirectTypeForOption")
-  val invalidDirectTypeForListLocation = LocationPath.control(ValidGenerationControl, "invalidDirectTypeForList")
-  val invalidDirectTypeForListForTypeLocation = LocationPath.control(ValidGenerationControl, "invalidDirectTypeForListForType")
-  val invalidDeepTypeForOptionLocation = LocationPath.control(ValidGenerationControl, "invalidDeepTypeForOption")
-  val invalidDeepTypeForListLocation = LocationPath.control(ValidGenerationControl, "invalidDeepTypeForList")
+  val controlDirectory = s"expression/${ValidGenerationControl.name}"
+  val invalidNumberOfArgumentsForOptionLocation = LocationPath.control(controlDirectory, "invalidNumberOfArgumentsForOption")
+  val invalidDirectTypeForOptionLocation = LocationPath.control(controlDirectory, "invalidDirectTypeForOption")
+  val invalidDirectTypeForListLocation = LocationPath.control(controlDirectory, "invalidDirectTypeForList")
+  val invalidDirectTypeForListForTypeLocation = LocationPath.control(controlDirectory, "invalidDirectTypeForListForType")
+  val invalidDeepTypeForOptionLocation = LocationPath.control(controlDirectory, "invalidDeepTypeForOption")
+  val invalidDeepTypeForListLocation = LocationPath.control(controlDirectory, "invalidDeepTypeForList")
 }

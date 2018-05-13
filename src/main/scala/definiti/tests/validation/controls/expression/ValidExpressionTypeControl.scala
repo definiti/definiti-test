@@ -1,11 +1,11 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.expression
 
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast.{Expression, Type}
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.ExpressionTypes
+import definiti.tests.validation.helpers.Types
 
 object ValidExpressionTypeControl extends Control[ValidationContext] {
   override def description: String = "Check if an expression returns a known type"
@@ -18,7 +18,7 @@ object ValidExpressionTypeControl extends Control[ValidationContext] {
   }
 
   private def controlExpression(expression: Expression, context: ValidationContext): ControlResult = {
-    val typ = ExpressionTypes.getTypeOfExpression(expression, context)
+    val typ = Types.getTypeOfExpression(expression, context)
     if (isTypeValid(typ, context)) {
       ControlResult.OK
     } else {

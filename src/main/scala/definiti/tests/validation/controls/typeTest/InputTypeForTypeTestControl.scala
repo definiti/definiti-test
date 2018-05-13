@@ -1,11 +1,11 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.typeTest
 
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ExpressionTypes, Types}
+import definiti.tests.validation.helpers.Types
 
 object InputTypeForTypeTestControl extends Control[ValidationContext] {
   override def description: String = "Control if given input is the same as type input"
@@ -28,7 +28,7 @@ object InputTypeForTypeTestControl extends Control[ValidationContext] {
   }
 
   private def controlExpression(expression: Expression, typ: Type, context: ValidationContext): ControlResult = {
-    if (Types.finalType(typ, context) == ExpressionTypes.getTypeOfExpression(expression, context)) {
+    if (Types.finalType(typ, context) == Types.getTypeOfExpression(expression, context)) {
       ControlResult.OK
     } else {
       invalidType(typ, expression.location)

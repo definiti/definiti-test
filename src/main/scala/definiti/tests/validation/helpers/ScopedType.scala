@@ -6,12 +6,12 @@ import definiti.tests.ast._
 case class ScopedType(typeReference: AbstractTypeReference, generics: Seq[String]) {
   def isSameAs(typ: Type): Boolean = {
     typeReference match {
-      case typeReference: TypeReference => isSameAstypeReference(typ, typeReference)
+      case typeReference: TypeReference => isSameAsTypeReference(typ, typeReference)
       case _ => false
     }
   }
 
-  private def isSameAstypeReference(typ: Type, typeReference: TypeReference): Boolean = {
+  private def isSameAsTypeReference(typ: Type, typeReference: TypeReference): Boolean = {
     if (generics.contains(typeReference.typeName)) {
       true
     } else {
@@ -20,7 +20,7 @@ case class ScopedType(typeReference: AbstractTypeReference, generics: Seq[String
       def sameNumberOfGenerics = typ.generics.length == typeReference.genericTypes.length
 
       def sameGenerics = typ.generics.zip(typeReference.genericTypes).forall { case (genericType, genericTypeReference) =>
-        isSameAstypeReference(genericType, genericTypeReference)
+        isSameAsTypeReference(genericType, genericTypeReference)
       }
 
       sameTypeName && sameNumberOfGenerics && sameGenerics

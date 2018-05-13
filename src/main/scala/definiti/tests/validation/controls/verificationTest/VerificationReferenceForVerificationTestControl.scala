@@ -1,4 +1,4 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.verificationTest
 
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}

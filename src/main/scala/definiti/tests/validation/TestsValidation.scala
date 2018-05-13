@@ -4,6 +4,7 @@ import definiti.common.ast.{ExtendedContext, Library}
 import definiti.common.control.ControlResult
 import definiti.tests.Configuration
 import definiti.tests.ast.{Generator, GeneratorMeta, TestsContext}
+import definiti.tests.validation.controls.Controls
 
 class TestsValidation(library: Library, configuration: Configuration, coreGenerators: Seq[GeneratorMeta]) {
   def validate(context: TestsContext): ControlResult = {

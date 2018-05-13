@@ -1,11 +1,11 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.verificationTest
 
 import definiti.common.ast.{AbstractTypeReference, Library, Location, Verification}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
+import definiti.tests.validation.helpers.{ScopedType, Types}
 
 object InputTypeForVerificationTestControl extends Control[ValidationContext] {
   override def description: String = "Control if given input is the same as verification input"
@@ -32,7 +32,7 @@ object InputTypeForVerificationTestControl extends Control[ValidationContext] {
   }
 
   private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
-    if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression, context))) {
+    if (scopedType.isSameAs(Types.getTypeOfExpression(expression, context))) {
       ControlResult.OK
     } else {
       invalidType(scopedType.typeReference, expression.location)

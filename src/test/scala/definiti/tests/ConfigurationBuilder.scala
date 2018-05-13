@@ -2,7 +2,7 @@ package definiti.tests
 
 import definiti.common.control.{Control, ControlLevel}
 import definiti.common.tests.ConfigurationMock
-import definiti.tests.validation.Controls
+import definiti.tests.validation.controls.Controls
 
 case class ConfigurationBuilder(configurationMock: ConfigurationMock = ConfigurationMock()) {
   def withOnlyControls(controls: String*): ConfigurationBuilder = {

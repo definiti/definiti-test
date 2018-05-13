@@ -1,11 +1,11 @@
-package definiti.tests.validation.controls
+package definiti.tests.validation.controls.expression
 
 import definiti.common.ast.{Expression => _, _}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType, Types}
+import definiti.tests.validation.helpers.{ScopedType, Types}
 
 object StructureControl extends Control[ValidationContext] {
   override def description: String = "Control if structure expression matches the expected type"
@@ -51,7 +51,7 @@ object StructureControl extends Control[ValidationContext] {
         .map(attribute => field -> attribute)
     }
     fieldsWithAttributes.map { case (field, attribute) =>
-      val fieldType = ExpressionTypes.getTypeOfExpression(field.expression, context)
+      val fieldType = Types.getTypeOfExpression(field.expression, context)
       val attributeType = attribute.typeDeclaration
       if (ScopedType(attributeType, definedType).isSameAs(fieldType)) {
         ControlResult.OK
