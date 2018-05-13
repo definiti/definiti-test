@@ -5,8 +5,8 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.utils.CollectionUtils
+import definiti.tests.validation.ValidationContext
 import definiti.tests.validation.helpers.{ExpressionTypes, Types}
-import definiti.tests.validation.{GeneratorMeta, ValidationContext}
 
 object ValidGenerationControl extends Control[ValidationContext] {
   override def description: String = "Check if generation expressions are valid"

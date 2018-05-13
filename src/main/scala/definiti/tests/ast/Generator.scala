@@ -18,3 +18,11 @@ case class Parameter(
   isRest: Boolean,
   location: Location
 )
+
+// A simplified version of Generator used both by native generators and project generators
+case class GeneratorMeta(
+  fullName: String,
+  generics: Seq[String],
+  typ: Type,
+  parameters: Seq[Parameter]
+)

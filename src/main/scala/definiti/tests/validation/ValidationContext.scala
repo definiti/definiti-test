@@ -1,45 +1,98 @@
 package definiti.tests.validation
 
-import definiti.common.ast.{ExtendedContext, Library}
+import definiti.common.ast.{Expression => _, _}
 import definiti.tests.ast._
 
 case class ValidationContext(
   context: TestsContext,
   generators: Seq[GeneratorMeta],
   library: Library
-)
-
-object ValidationContext {
-  def apply(
-    context: TestsContext,
-    library: Library,
-    coreGenerators: Seq[GeneratorMeta]
-  ): ValidationContext = {
-    val projectGenerators = library.root.namespaces
-      .flatMap(_.elements)
+) {
+  def testVerifications: Seq[TestVerification] = {
+    context.tests
       .collect {
-        case context: ExtendedContext[TestsContext] if context.name == "tests" => context
+        case testVerification: TestVerification => testVerification
       }
-      .map(_.content)
-      .flatMap(_.generators)
-      .map(generatorToGeneratorMeta)
-
-    new ValidationContext(context, coreGenerators ++ projectGenerators, library)
   }
 
-  private def generatorToGeneratorMeta(generator: Generator): GeneratorMeta = {
-    GeneratorMeta(
-      fullName = generator.fullName,
-      generics = generator.generics,
-      typ = generator.typ,
-      parameters = generator.parameters
-    )
+  def testTypes: Seq[TestType] = {
+    context.tests
+      .collect {
+        case testType: TestType => testType
+      }
+  }
+
+  def extractExpressions[B <: Expression](pf: PartialFunction[Expression, B]): Seq[B] = {
+    extractAllExpressions().collect(pf)
+  }
+
+  def extractAllExpressions(): Seq[Expression] = {
+    extractMainExpressions()
+      .flatMap(extractDeepExpressions)
+  }
+
+  def extractMainExpressions(): Seq[Expression] = {
+    extractTestVerificationExpressions ++ extractTestTypeExpressions ++ extractGeneratorExpressions
+  }
+
+  def extractTestVerificationExpressions: Seq[Expression] = {
+    testVerifications
+      .flatMap(_.cases)
+      .flatMap(_.subCases)
+      .flatMap { subCase =>
+        (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
+      }
+  }
+
+  def extractTestTypeExpressions: Seq[Expression] = {
+    testTypes
+      .flatMap(_.cases)
+      .flatMap(_.subCases)
+      .flatMap { subCase =>
+        (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
+      }
+  }
+
+  def extractGeneratorExpressions: Seq[Expression] = {
+    context.generators.map(_.expression)
+  }
+
+  def extractDeepExpressions(expression: Expression): Seq[Expression] = {
+    expression match {
+      case generationExpression: GenerationExpression =>
+        generationExpression +: generationExpression.arguments.flatMap(extractDeepExpressions)
+      case structureExpression: StructureExpression =>
+        structureExpression +: structureExpression.fields.map(_.expression).flatMap(extractDeepExpressions)
+      case other =>
+        Seq(other)
+    }
+  }
+
+  def getVerification(verificationName: String): Option[Verification] = {
+    library.verificationsMap.get(verificationName)
+  }
+
+  def hasVerification(verificationName: String): Boolean = {
+    library.verificationsMap.contains(verificationName)
+  }
+
+  def getClassDefinition(typeName: String): Option[ClassDefinition] = {
+    library.typesMap.get(typeName)
+  }
+
+  def getDefinedType(typeName: String): Option[DefinedType] = {
+    library.typesMap
+      .get(typeName)
+      .collect {
+        case definedType: DefinedType => definedType
+      }
+  }
+
+  def hasType(typeName: String): Boolean = {
+    library.typesMap.contains(typeName)
+  }
+
+  def getGenerator(generatorName: String): Option[GeneratorMeta] = {
+    generators.find(_.fullName == generatorName)
   }
 }
-
-case class GeneratorMeta(
-  fullName: String,
-  generics: Seq[String],
-  typ: Type,
-  parameters: Seq[Parameter]
-)

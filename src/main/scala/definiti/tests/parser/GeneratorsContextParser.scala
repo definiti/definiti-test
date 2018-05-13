@@ -8,7 +8,6 @@ import definiti.tests.ast._
 import definiti.tests.parser.antlr.GeneratorsParser._
 import definiti.tests.parser.antlr.{GeneratorsLexer, GeneratorsParser}
 import definiti.tests.utils.CollectionUtils
-import definiti.tests.validation.GeneratorMeta
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
 class GeneratorsContextParser(file: String) extends LocationUtils {
