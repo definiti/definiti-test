@@ -1,7 +1,7 @@
 package definiti.tests.validation.helpers
 
 import definiti.common.ast._
-import definiti.tests.AST._
+import definiti.tests.ast._
 
 case class ScopedType(typeReference: AbstractTypeReference, generics: Seq[String]) {
   def isSameAs(typ: Type): Boolean = {

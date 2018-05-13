@@ -2,7 +2,7 @@ package definiti.tests.parser
 
 import definiti.common.ast.Location
 import definiti.common.utils.StringUtils
-import definiti.tests.AST.{TestsContext => TestsContextAST, _}
+import definiti.tests.ast.{TestsContext => TestsContextAST, _}
 import definiti.tests.parser.antlr.TestsParser._
 import definiti.tests.utils.CollectionUtils
 import org.antlr.v4.runtime.tree.TerminalNode

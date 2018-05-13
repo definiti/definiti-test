@@ -1,6 +1,6 @@
 package definiti.tests.utils
 
-import definiti.tests.AST.Type
+import definiti.tests.ast.Type
 
 object CommonTypes {
   val boolean = Type("Boolean")

@@ -1,7 +1,7 @@
 package definiti.tests.validation.helpers
 
 import definiti.common.ast._
-import definiti.tests.AST.Type
+import definiti.tests.ast.Type
 import definiti.tests.validation.ValidationContext
 
 object Types {

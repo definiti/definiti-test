@@ -3,7 +3,7 @@ package definiti.tests.validation.controls
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
-import definiti.tests.AST.{Expression, Type}
+import definiti.tests.ast.{Expression, Type}
 import definiti.tests.validation.ValidationContext
 import definiti.tests.validation.helpers.ExpressionTypes
 

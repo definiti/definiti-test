@@ -1,7 +1,7 @@
 package definiti.tests.validation
 
 import definiti.common.ast.{ExtendedContext, Library}
-import definiti.tests.AST._
+import definiti.tests.ast._
 
 case class ValidationContext(
   context: TestsContext,

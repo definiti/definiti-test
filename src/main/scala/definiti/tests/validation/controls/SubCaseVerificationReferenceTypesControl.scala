@@ -3,8 +3,7 @@ package definiti.tests.validation.controls
 import definiti.common.ast._
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
-import definiti.tests.AST
-import definiti.tests.AST.{Case, SubCase, TestVerification}
+import definiti.tests.ast.{Case, SubCase, TestVerification, Expression}
 import definiti.tests.validation.ValidationContext
 import definiti.tests.validation.helpers.{ExpressionTypes, ScopedType}
 
@@ -42,7 +41,7 @@ object SubCaseVerificationReferenceTypesControl extends Control[ValidationContex
     }
   }
 
-  private def controlExpression(expression: AST.Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
+  private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
     if (scopedType.isSameAs(ExpressionTypes.getTypeOfExpression(expression, context))) {
       ControlResult.OK
     } else {

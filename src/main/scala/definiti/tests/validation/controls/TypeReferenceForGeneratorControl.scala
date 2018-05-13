@@ -3,7 +3,7 @@ package definiti.tests.validation.controls
 import definiti.common.ast.{Library, Location}
 import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
-import definiti.tests.AST.{Generator, Type}
+import definiti.tests.ast.{Generator, Type}
 import definiti.tests.validation.ValidationContext
 
 object TypeReferenceForGeneratorControl extends Control[ValidationContext] {

@@ -4,7 +4,7 @@ import java.nio.file.{Files, Paths}
 
 import definiti.common.ast.Location
 import definiti.common.validation.{Invalid, Valid, Validated}
-import definiti.tests.AST._
+import definiti.tests.ast._
 import definiti.tests.parser.antlr.GeneratorsParser._
 import definiti.tests.parser.antlr.{GeneratorsLexer, GeneratorsParser}
 import definiti.tests.utils.CollectionUtils

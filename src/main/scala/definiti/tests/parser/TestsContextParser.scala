@@ -3,7 +3,7 @@ package definiti.tests.parser
 import definiti.common.ast.Location
 import definiti.common.utils.StringUtils
 import definiti.common.validation.{Invalid, Valid, Validated}
-import definiti.tests.AST.{TestsContext => TestsContextAST, _}
+import definiti.tests.ast.{TestsContext => TestsContextAST, _}
 import definiti.tests.parser.antlr.TestsParser._
 import definiti.tests.parser.antlr.{TestsLexer, TestsParser}
 import definiti.tests.utils.CollectionUtils

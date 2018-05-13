@@ -1,6 +1,6 @@
 package definiti.tests.json
 
-import definiti.tests.AST._
+import definiti.tests.ast._
 import spray.json.RootJsonFormat
 
 object JsonAST {

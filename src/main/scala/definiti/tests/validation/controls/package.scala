@@ -1,7 +1,7 @@
 package definiti.tests.validation
 
 import definiti.common.ast.{ClassDefinition, DefinedType, Verification}
-import definiti.tests.AST._
+import definiti.tests.ast._
 
 package object controls {
 

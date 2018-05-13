@@ -3,7 +3,7 @@ package definiti.tests.end2end.controls
 import definiti.common.ast.{Root, TypeReference}
 import definiti.common.program.Ko
 import definiti.common.tests.LocationPath
-import definiti.tests.AST.Type
+import definiti.tests.ast.Type
 import definiti.tests.ConfigurationBuilder
 import definiti.tests.end2end.EndToEndSpec
 import definiti.tests.validation.controls.StructureControl

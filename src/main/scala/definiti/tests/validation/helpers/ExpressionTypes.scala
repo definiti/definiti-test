@@ -1,6 +1,6 @@
 package definiti.tests.validation.helpers
 
-import definiti.tests.AST._
+import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
 
 object ExpressionTypes {
