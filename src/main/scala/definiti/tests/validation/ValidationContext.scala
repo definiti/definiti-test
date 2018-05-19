@@ -1,6 +1,6 @@
 package definiti.tests.validation
 
-import definiti.common.ast.{AttributeCall => _, Expression => _, MethodCall => _, _}
+import definiti.common.ast.{AttributeCall => _, Expression => _, MethodCall => _, Condition => _, _}
 import definiti.tests.ast._
 import definiti.tests.validation.helpers.ScopedExpression
 
@@ -79,6 +79,13 @@ case class ValidationContext(
         (methodCall +: extractDeepExpressions(methodCall.inner)) ++ methodCall.arguments.flatMap(extractDeepExpressions)
       case attributeCall: AttributeCall =>
         attributeCall +: extractDeepExpressions(attributeCall.inner)
+      case condition: Condition =>
+        Seq(
+          Seq(condition),
+          extractDeepExpressions(condition.condition),
+          extractDeepExpressions(condition.thenCase),
+          extractDeepExpressions(condition.elseCase)
+        ).flatten
       case other =>
         Seq(other)
     }

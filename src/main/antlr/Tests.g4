@@ -9,6 +9,8 @@ TYPE         : 'type';
 ACCEPT       : 'accept';
 REFUSE       : 'refuse';
 GENERATOR    : 'generator';
+IF           : 'if';
+ELSE         : 'else';
 IDENTIFIER   : [a-zA-Z0-9]+;
 
 tests: toplevel*;
@@ -50,6 +52,7 @@ expression
   | inner=expression '.' method=IDENTIFIER generics? arguments // method call
   | inner=expression '.' attribute=IDENTIFIER                  // attribute call
   | reference=IDENTIFIER
+  | IF '(' condition=expression ')' thenCase=expression ELSE elseCase=expression
   ;
 
 generation: name=IDENTIFIER generics? arguments;

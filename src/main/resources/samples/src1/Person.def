@@ -46,3 +46,8 @@ verification HasFrenchPhoneNumber {
 }
 
 type NonEmptyList[A] = List[A] verifying IsNonEmptyList
+
+type Period {
+  start: Date
+  end: Date
+}

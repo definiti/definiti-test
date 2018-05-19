@@ -11,6 +11,7 @@ scalaVersion := "2.12.6"
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies += "io.github.definiti" %% "core" % "0.3.0-SNAPSHOT"
+libraryDependencies += "io.github.definiti" % "api" % "0.3.0-SNAPSHOT"
 libraryDependencies += "org.antlr" % "antlr4" % "4.7.1"
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.4"
 

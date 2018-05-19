@@ -23,3 +23,5 @@ case class Reference(target: String, location: Location) extends Expression
 case class MethodCall(inner: Expression, method: String, generics: Seq[Type], arguments: Seq[Expression], location: Location) extends Expression
 
 case class AttributeCall(inner: Expression, attribute: String, location: Location) extends Expression
+
+case class Condition(condition: Expression, thenCase: Expression, elseCase: Expression, location: Location) extends Expression

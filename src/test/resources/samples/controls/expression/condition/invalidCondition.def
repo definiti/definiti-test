@@ -1,0 +1,5 @@
+context tests {{{
+  generator minOfDate(first: Date, second: Date): Date =
+    if (first.timestamp) first
+    else second
+}}}

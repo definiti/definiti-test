@@ -6,6 +6,7 @@ import my.person.IsNonEmptyList
 import my.person.HasFrenchPhoneNumber
 import my.person.Person
 import my.person.NonEmptyList
+import my.person.Period
 
 context tests {{{
   test verification IsNonBlank {
@@ -134,6 +135,13 @@ context tests {{{
     firstName: firstName
     lastName: name()
     phone: phoneString()
+  }
+
+  generator anyValidPeriod(): Period = validPeriod(anyDate(), anyDate())
+
+  generator validPeriod(first: Date, second: Date): Period = Period {
+    start: if (first.isBefore(second)) first else second
+    end: if (first.isBefore(second)) second else first
   }
 
   /* Not implemented yet:

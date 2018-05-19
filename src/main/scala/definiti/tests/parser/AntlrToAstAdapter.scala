@@ -69,6 +69,7 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
     val methodOpt = Option(context).filter(_.method != null).map(processMethod)
     val attributeOpt = Option(context).filter(_.attribute != null).map(processAttribute)
     val referenceOpt = Option(context).filter(_.reference != null).map(processReference)
+    val conditionOpt = Option(context).filter(_.condition != null).map(processCondition)
 
     booleanOpt
       .orElse(numberOpt)
@@ -78,6 +79,7 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
       .orElse(methodOpt)
       .orElse(attributeOpt)
       .orElse(referenceOpt)
+      .orElse(conditionOpt)
       .getOrElse {
         // Should not happen because all cases have been processed.
         // Defensive coding when adding types.
@@ -142,6 +144,15 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
   private def processReference(context: ExpressionContext): Reference = {
     Reference(
       target = nameWithImport(context.reference.getText),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processCondition(context: ExpressionContext): Condition = {
+    Condition(
+      condition = processExpression(context.condition),
+      thenCase = processExpression(context.thenCase),
+      elseCase = processExpression(context.elseCase),
       location = getLocationFromContext(context)
     )
   }

@@ -67,6 +67,14 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
               .map(enum => Type(enum.fullName))
           }
           .getOrElse(any)
+      case condition: Condition =>
+        val thenType = process(condition.thenCase)
+        val elseType = process(condition.elseCase)
+        if (thenType == elseType) {
+          thenType
+        } else {
+          any
+        }
     }
   }
 }
@@ -138,6 +146,12 @@ object ScopedExpression {
 
   implicit class scopedReference(scopedExpression: ScopedExpression[Reference]) {
     def target: String = scopedExpression.expression.target
+  }
+
+  implicit class scopedCondition(scopedExpression: ScopedExpression[Condition]) {
+    def condition: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.condition, scopedExpression)
+    def thenCase: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.thenCase, scopedExpression)
+    def elseCase: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.elseCase, scopedExpression)
   }
 
 }

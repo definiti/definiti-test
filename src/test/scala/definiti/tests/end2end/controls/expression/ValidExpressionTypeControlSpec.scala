@@ -60,6 +60,18 @@ class ValidExpressionTypeControlSpec extends EndToEndSpec {
       ValidExpressionTypeControl.invalidType(listOf(listOf("Unknown")), invalidListLocation(13, 12, 33))
     ))
   }
+
+  it should "validate a valid condition" in {
+    val output = processFile("controls.expression.validExpressionType.validCondition", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "invalidate a condition when if and else have two different types" in {
+    val output = processFile("controls.expression.validExpressionType.thenAndElseHaveDifferentTypes", configuration)
+    output should beResult(Ko[Root](
+      ValidExpressionTypeControl.invalidType(any, thenAndElseHaveDifferentTypesLocation(3, 5, 4, 16))
+    ))
+  }
 }
 
 object ValidExpressionTypeControlSpec {
@@ -71,4 +83,5 @@ object ValidExpressionTypeControlSpec {
   val invalidTypeForGeneratorLocation = LocationPath.control(controlDirectory, "invalidTypeForGenerator")
   val invalidListLocation = LocationPath.control(controlDirectory, "invalidList")
   val invalidGenericNumberLocation = LocationPath.control(controlDirectory, "invalidGenericNumber")
+  val thenAndElseHaveDifferentTypesLocation = LocationPath.control(controlDirectory, "thenAndElseHaveDifferentTypes")
 }
