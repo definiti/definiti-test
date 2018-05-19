@@ -144,6 +144,10 @@ context tests {{{
     end: if (first.isBefore(second)) second else first
   }
 
+  generator minOf(first: Number, second: Number): Number =
+    if (first < second) first
+    else second
+
   /* Not implemented yet:
 
   test type Person {

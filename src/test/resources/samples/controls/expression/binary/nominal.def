@@ -1,0 +1,15 @@
+context tests {{{
+  generator minOfNumber(first: Number, second: Number): Number =
+    if (first < second) first
+    else second
+
+  generator sameString(first: String, second: String): Boolean =
+    first == second
+
+  generator plus(first: Number, second: Number): Number =
+    first + second
+
+  generator maxOfNumber(first: Number, second: Number): Number =
+    if (first > second || first == second) first
+    else second
+}}}

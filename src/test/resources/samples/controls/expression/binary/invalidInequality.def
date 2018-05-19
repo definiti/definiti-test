@@ -1,0 +1,13 @@
+context tests {{{
+  generator minOfNumber(first: Number, second: Number): Number =
+    if (first < "second") first
+    else second
+
+  generator minOfNumber(first: Number, second: Number): Number =
+    if ("first" > second) first
+    else second
+
+  generator minOfNumber(first: Boolean, second: String): Number =
+    if (first <= second) first
+    else second
+}}}

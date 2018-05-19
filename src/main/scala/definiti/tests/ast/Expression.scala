@@ -25,3 +25,42 @@ case class MethodCall(inner: Expression, method: String, generics: Seq[Type], ar
 case class AttributeCall(inner: Expression, attribute: String, location: Location) extends Expression
 
 case class Condition(condition: Expression, thenCase: Expression, elseCase: Expression, location: Location) extends Expression
+
+case class Binary(operator: BinaryOperator.Value, left: Expression, right: Expression, location: Location) extends Expression
+
+object BinaryOperator extends Enumeration {
+  val or, and, lower, lowerOrEqual, upper, upperOrEqual, equal, different, plus, minus, time, divide, modulo = Value
+
+  def from(raw: String): BinaryOperator.Value = raw match {
+    case "||" => or
+    case "&&" => and
+    case "<" => lower
+    case "<=" => lowerOrEqual
+    case ">" => upper
+    case ">=" => upperOrEqual
+    case "==" => equal
+    case "!=" => different
+    case "+" => plus
+    case "-" => minus
+    case "*" => time
+    case "/" => divide
+    case "%" => modulo
+    case _ => throw new NoSuchElementException(s"No value found for '$raw'")
+  }
+
+  def isConditional(operator: BinaryOperator.Value): Boolean = {
+    operator == or || operator == and
+  }
+
+  def isEquality(operator: BinaryOperator.Value): Boolean = {
+    operator == equal || operator == different
+  }
+
+  def isInequality(operator: BinaryOperator.Value): Boolean = {
+    operator == lower || operator == lowerOrEqual || operator == upper || operator == upperOrEqual
+  }
+
+  def isComputation(operator: BinaryOperator.Value): Boolean = {
+    operator == plus || operator == minus || operator == time || operator == divide || operator == modulo
+  }
+}

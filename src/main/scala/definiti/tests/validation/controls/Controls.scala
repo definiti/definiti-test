@@ -10,6 +10,7 @@ import definiti.tests.validation.controls.verificationTest._
 object Controls {
   val all: Seq[Control[ValidationContext]] = Seq(
     AttributeExistenceControl,
+    BinaryControl,
     ConditionControl,
     ExpressionTypeOfGeneratorControl,
     InputTypeForTypeTestControl,

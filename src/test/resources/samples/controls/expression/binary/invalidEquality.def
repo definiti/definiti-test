@@ -1,0 +1,7 @@
+context tests {{{
+  generator sameString(first: String, second: Number): Boolean =
+    first == second
+
+  generator differentString(first: String): Boolean =
+    first != 1
+}}}

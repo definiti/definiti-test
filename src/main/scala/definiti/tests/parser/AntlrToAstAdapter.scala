@@ -70,6 +70,7 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
     val attributeOpt = Option(context).filter(_.attribute != null).map(processAttribute)
     val referenceOpt = Option(context).filter(_.reference != null).map(processReference)
     val conditionOpt = Option(context).filter(_.condition != null).map(processCondition)
+    val binaryOpt = Option(context).filter(_.operator != null).map(processBinary)
 
     booleanOpt
       .orElse(numberOpt)
@@ -80,6 +81,7 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
       .orElse(attributeOpt)
       .orElse(referenceOpt)
       .orElse(conditionOpt)
+      .orElse(binaryOpt)
       .getOrElse {
         // Should not happen because all cases have been processed.
         // Defensive coding when adding types.
@@ -153,6 +155,15 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
       condition = processExpression(context.condition),
       thenCase = processExpression(context.thenCase),
       elseCase = processExpression(context.elseCase),
+      location = getLocationFromContext(context)
+    )
+  }
+
+  private def processBinary(context: ExpressionContext): Binary = {
+    Binary(
+      operator = BinaryOperator.from(context.operator.getText),
+      left = processExpression(context.left),
+      right = processExpression(context.right),
       location = getLocationFromContext(context)
     )
   }

@@ -1,0 +1,9 @@
+context tests {{{
+  generator maxOfNumber(first: Number, second: Number): Number =
+    if (first > second || 1) first
+    else second
+
+  generator maxOfNumber(first: Number, second: Number): Number =
+    if ("first > second" && first == second) first
+    else second
+}}}

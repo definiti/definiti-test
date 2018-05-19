@@ -75,6 +75,9 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
         } else {
           any
         }
+      case binary: Binary =>
+        if (BinaryOperator.isComputation(binary.operator)) number
+        else boolean
     }
   }
 }
@@ -152,6 +155,12 @@ object ScopedExpression {
     def condition: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.condition, scopedExpression)
     def thenCase: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.thenCase, scopedExpression)
     def elseCase: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.elseCase, scopedExpression)
+  }
+
+  implicit class scopedBinary(scopedExpression: ScopedExpression[Binary]) {
+    def operator: BinaryOperator.Value = scopedExpression.expression.operator
+    def left: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.left, scopedExpression)
+    def right: ScopedExpression[Expression] = ScopedExpression(scopedExpression.expression.right, scopedExpression)
   }
 
 }

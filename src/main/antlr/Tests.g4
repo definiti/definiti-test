@@ -1,17 +1,21 @@
 grammar Tests;
 
-BOOLEAN      : 'true' | 'false';
-NUMBER       : [0-9]+('.'[0-9]+)?;
-STRING       : '"' ( '\\"' | . )*? '"';
-TEST         : 'test';
-VERIFICATION : 'verification';
-TYPE         : 'type';
-ACCEPT       : 'accept';
-REFUSE       : 'refuse';
-GENERATOR    : 'generator';
-IF           : 'if';
-ELSE         : 'else';
-IDENTIFIER   : [a-zA-Z0-9]+;
+BOOLEAN                      : 'true' | 'false';
+NUMBER                       : ('-')?[0-9]+('.'[0-9]+)?;
+STRING                       : '"' ( '\\"' | . )*? '"';
+TEST                         : 'test';
+VERIFICATION                 : 'verification';
+TYPE                         : 'type';
+ACCEPT                       : 'accept';
+REFUSE                       : 'refuse';
+GENERATOR                    : 'generator';
+IF                           : 'if';
+ELSE                         : 'else';
+CALCULATOR_OPERATOR_LEVEL_1  : ('*' | '/' | '%');
+CALCULATOR_OPERATOR_LEVEL_2  : ('+' | '-');
+LOGICAL_OPERATOR             : ('==' | '!=' | '<' | '<=' | '>' | '>=');
+LOGICAL_COMBINATION_OPERATOR : ('&&' | '||');
+IDENTIFIER                   : [a-zA-Z0-9]+;
 
 tests: toplevel*;
 
@@ -53,6 +57,10 @@ expression
   | inner=expression '.' attribute=IDENTIFIER                  // attribute call
   | reference=IDENTIFIER
   | IF '(' condition=expression ')' thenCase=expression ELSE elseCase=expression
+  | left=expression operator=CALCULATOR_OPERATOR_LEVEL_1  right=expression
+  | left=expression operator=CALCULATOR_OPERATOR_LEVEL_2  right=expression
+  | left=expression operator=LOGICAL_OPERATOR             right=expression
+  | left=expression operator=LOGICAL_COMBINATION_OPERATOR right=expression
   ;
 
 generation: name=IDENTIFIER generics? arguments;
