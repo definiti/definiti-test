@@ -130,6 +130,12 @@ context tests {{{
     accept validPerson()
   }
 
+  generator personWithFirstName(firstName: String): Person = Person {
+    firstName: firstName
+    lastName: name()
+    phone: phoneString()
+  }
+
   /* Not implemented yet:
 
   test type Person {

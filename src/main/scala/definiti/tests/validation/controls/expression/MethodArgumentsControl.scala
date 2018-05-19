@@ -5,7 +5,7 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ScopedType, Types}
+import definiti.tests.validation.helpers.{ScopedExpression, ScopedType, Types}
 
 object MethodArgumentsControl extends Control[ValidationContext] {
   override def description: String = "Checks if arguments of the method are the same as the definition"
@@ -19,22 +19,22 @@ object MethodArgumentsControl extends Control[ValidationContext] {
       .map(controlMethodCall(_, context))
   }
 
-  private def controlMethodCall(methodCall: MethodCall, context: ValidationContext): ControlResult = {
-    getMethod(methodCall, context)
+  private def controlMethodCall(scopedMethodCall: ScopedExpression[MethodCall], context: ValidationContext): ControlResult = {
+    getMethod(scopedMethodCall, context)
       .map { methodDefinition =>
-        if (methodDefinition.parameters.length == methodCall.arguments.length) {
-          controlParametersAndArguments(methodCall, methodDefinition, context)
+        if (methodDefinition.parameters.length == scopedMethodCall.arguments.length) {
+          controlParametersAndArguments(scopedMethodCall, methodDefinition, context)
         } else {
-          ControlResult(invalidNumberOfArguments(methodDefinition.parameters.length, methodCall.arguments.length, methodCall.location))
+          ControlResult(invalidNumberOfArguments(methodDefinition.parameters.length, scopedMethodCall.arguments.length, scopedMethodCall.location))
         }
       }
       .getOrElse(ignored)
   }
 
-  private def controlParametersAndArguments(methodCall: MethodCall, methodDefinition: MethodDefinition, context: ValidationContext): ControlResult = {
+  private def controlParametersAndArguments(methodCall: ScopedExpression[MethodCall], methodDefinition: MethodDefinition, context: ValidationContext): ControlResult = {
     methodDefinition.parameters.zip(methodCall.arguments)
       .map { case (parameter, argument) =>
-        val typeOfArgument = Types.finalType(Types.getTypeOfExpression(argument, context), context)
+        val typeOfArgument = Types.finalType(argument.typeOfExpression, context)
         val scopedTypeOfParameter = ScopedType(parameter.typeReference, methodDefinition)
         if (scopedTypeOfParameter.isSameAs(typeOfArgument)) {
           ControlResult.OK
@@ -44,8 +44,8 @@ object MethodArgumentsControl extends Control[ValidationContext] {
       }
   }
 
-  private def getMethod(methodCall: MethodCall, context: ValidationContext): Option[MethodDefinition] = {
-    val innerType = Types.getTypeOfExpression(methodCall.inner, context)
+  private def getMethod(methodCall: ScopedExpression[MethodCall], context: ValidationContext): Option[MethodDefinition] = {
+    val innerType = methodCall.inner.typeOfExpression
     context.getFinalClassDefinition(innerType.name)
       .collect { case native: NativeClassDefinition => native }
       .flatMap(_.methods.find(_.name == methodCall.method))

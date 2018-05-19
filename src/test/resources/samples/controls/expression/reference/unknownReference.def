@@ -1,0 +1,5 @@
+context tests {{{
+  generator invalid(): Number = unknown
+
+  generator positiveNumberUnder(max: Number): Number = numberBetween(maxValue)
+}}}

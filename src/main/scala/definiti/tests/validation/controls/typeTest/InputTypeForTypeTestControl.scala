@@ -5,7 +5,7 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.Types
+import definiti.tests.validation.helpers.{ScopedExpression, Types}
 
 object InputTypeForTypeTestControl extends Control[ValidationContext] {
   override def description: String = "Control if given input is the same as type input"
@@ -17,18 +17,18 @@ object InputTypeForTypeTestControl extends Control[ValidationContext] {
       .map { case (typ, expression) => controlExpression(expression, typ, context) }
   }
 
-  private def extractExpressions(context: ValidationContext): Seq[(Type, Expression)] = {
+  private def extractExpressions(context: ValidationContext): Seq[(Type, ScopedExpression[Expression])] = {
     for {
       test <- context.testTypes
       testCase <- test.cases
       subCase <- testCase.subCases
     } yield {
-      test.typ -> subCase.expression
+      test.typ -> ScopedExpression(subCase.expression, context)
     }
   }
 
-  private def controlExpression(expression: Expression, typ: Type, context: ValidationContext): ControlResult = {
-    if (Types.finalType(typ, context) == Types.getTypeOfExpression(expression, context)) {
+  private def controlExpression(expression: ScopedExpression[Expression], typ: Type, context: ValidationContext): ControlResult = {
+    if (Types.finalType(typ, context) == expression.typeOfExpression) {
       ControlResult.OK
     } else {
       invalidType(typ, expression.location)

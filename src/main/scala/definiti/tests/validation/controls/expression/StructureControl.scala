@@ -5,7 +5,7 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ScopedType, Types}
+import definiti.tests.validation.helpers.{ScopedExpression, ScopedType, Types}
 
 object StructureControl extends Control[ValidationContext] {
   override def description: String = "Control if structure expression matches the expected type"
@@ -18,13 +18,13 @@ object StructureControl extends Control[ValidationContext] {
       .map(controlStructure(_, context))
   }
 
-  private def controlStructure(structureExpression: StructureExpression, context: ValidationContext): ControlResult = {
+  private def controlStructure(structureExpression: ScopedExpression[StructureExpression], context: ValidationContext): ControlResult = {
     context.getDefinedType(structureExpression.typ.name) match {
       case Some(definedType) =>
         ControlResult.squash {
           Seq(
             controlFieldList(structureExpression, definedType),
-            controlFieldTypes(structureExpression, definedType, context)
+            controlFieldTypes(structureExpression, definedType)
           )
         }
       case None =>
@@ -32,7 +32,7 @@ object StructureControl extends Control[ValidationContext] {
     }
   }
 
-  private def controlFieldList(structureExpression: StructureExpression, definedType: DefinedType): ControlResult = {
+  private def controlFieldList(structureExpression: ScopedExpression[StructureExpression], definedType: DefinedType): ControlResult = {
     val addedFields = structureExpression.fields
       .filter(field => definedType.attributes.forall(_.name != field.name))
       .map(field => fieldAdded(field.name, structureExpression.typ, field.location))
@@ -44,14 +44,14 @@ object StructureControl extends Control[ValidationContext] {
     (addedFields ++ missingFields).map(ControlResult(_))
   }
 
-  private def controlFieldTypes(structureExpression: StructureExpression, definedType: DefinedType, context: ValidationContext): ControlResult = {
+  private def controlFieldTypes(structureExpression: ScopedExpression[StructureExpression], definedType: DefinedType): ControlResult = {
     val fieldsWithAttributes = structureExpression.fields.flatMap { field =>
       definedType.attributes
         .find(_.name == field.name)
         .map(attribute => field -> attribute)
     }
     fieldsWithAttributes.map { case (field, attribute) =>
-      val fieldType = Types.getTypeOfExpression(field.expression, context)
+      val fieldType = field.expression.typeOfExpression
       val attributeType = attribute.typeDeclaration
       if (ScopedType(attributeType, definedType).isSameAs(fieldType)) {
         ControlResult.OK

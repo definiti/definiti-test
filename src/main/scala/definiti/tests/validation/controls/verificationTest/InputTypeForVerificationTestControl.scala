@@ -5,7 +5,7 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ScopedType, Types}
+import definiti.tests.validation.helpers.{ScopedExpression, ScopedType}
 
 object InputTypeForVerificationTestControl extends Control[ValidationContext] {
   override def description: String = "Control if given input is the same as verification input"
@@ -28,11 +28,11 @@ object InputTypeForVerificationTestControl extends Control[ValidationContext] {
 
   private def controlTestCase(testCase: Case, verification: Verification, context: ValidationContext): ControlResult = {
     val typeReference = verification.function.parameters.head.typeReference
-    testCase.subCases.map(subCase => controlExpression(subCase.expression, ScopedType(typeReference, verification), context))
+    testCase.subCases.map(subCase => controlExpression(ScopedExpression(subCase.expression, context), ScopedType(typeReference, verification)))
   }
 
-  private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
-    if (scopedType.isSameAs(Types.getTypeOfExpression(expression, context))) {
+  private def controlExpression(expression: ScopedExpression[Expression], scopedType: ScopedType): ControlResult = {
+    if (scopedType.isSameAs(expression.typeOfExpression)) {
       ControlResult.OK
     } else {
       invalidType(scopedType.typeReference, expression.location)

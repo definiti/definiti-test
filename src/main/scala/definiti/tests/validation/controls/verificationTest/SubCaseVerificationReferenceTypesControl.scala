@@ -5,7 +5,7 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast.{Case, Expression, SubCase, TestVerification}
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.{ScopedType, Types}
+import definiti.tests.validation.helpers.{ScopedExpression, ScopedType}
 
 object SubCaseVerificationReferenceTypesControl extends Control[ValidationContext] {
   override def description: String = "Control that sub case to a verification have the right input types"
@@ -34,15 +34,15 @@ object SubCaseVerificationReferenceTypesControl extends Control[ValidationContex
     if (verification.parameters.length == subCase.arguments.length) {
       verification.parameters.zip(subCase.arguments)
         .map { case (verificationParameter, caseArgument) =>
-          controlExpression(caseArgument, ScopedType(verificationParameter.typeReference, verification), context)
+          controlExpression(ScopedExpression(caseArgument, context), ScopedType(verificationParameter.typeReference, verification))
         }
     } else {
       invalidNumberOfParameters(verification.parameters.length, subCase.arguments.length, subCase.location)
     }
   }
 
-  private def controlExpression(expression: Expression, scopedType: ScopedType, context: ValidationContext): ControlResult = {
-    if (scopedType.isSameAs(Types.getTypeOfExpression(expression, context))) {
+  private def controlExpression(expression: ScopedExpression[Expression], scopedType: ScopedType): ControlResult = {
+    if (scopedType.isSameAs(expression.typeOfExpression)) {
       ControlResult.OK
     } else {
       invalidType(scopedType.typeReference, expression.location)

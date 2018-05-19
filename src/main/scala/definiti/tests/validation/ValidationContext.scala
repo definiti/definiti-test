@@ -2,6 +2,7 @@ package definiti.tests.validation
 
 import definiti.common.ast.{AttributeCall => _, Expression => _, MethodCall => _, _}
 import definiti.tests.ast._
+import definiti.tests.validation.helpers.ScopedExpression
 
 case class ValidationContext(
   context: TestsContext,
@@ -22,39 +23,50 @@ case class ValidationContext(
       }
   }
 
-  def extractExpressions[B <: Expression](pf: PartialFunction[Expression, B]): Seq[B] = {
-    extractAllExpressions().collect(pf)
+  def extractExpressions[E <: Expression](pf: PartialFunction[Expression, E]): Seq[ScopedExpression[E]] = {
+    val collector: PartialFunction[Expression, Option[E]] = pf.andThen(Some(_)).orElse { case _ => None }
+    extractAllExpressions().flatMap { scopedExpression =>
+      collector.apply(scopedExpression.expression)
+        .map(ScopedExpression(_, scopedExpression))
+    }
   }
 
-  def extractAllExpressions(): Seq[Expression] = {
+  def extractAllExpressions(): Seq[ScopedExpression[Expression]] = {
     extractMainExpressions()
-      .flatMap(extractDeepExpressions)
+      .flatMap { scopedExpressions =>
+        extractDeepExpressions(scopedExpressions.expression)
+          .map(ScopedExpression(_, scopedExpressions))
+      }
   }
 
-  def extractMainExpressions(): Seq[Expression] = {
+  def extractMainExpressions(): Seq[ScopedExpression[Expression]] = {
     extractTestVerificationExpressions ++ extractTestTypeExpressions ++ extractGeneratorExpressions
   }
 
-  def extractTestVerificationExpressions: Seq[Expression] = {
+  def extractTestVerificationExpressions: Seq[ScopedExpression[Expression]] = {
     testVerifications
       .flatMap(_.cases)
       .flatMap(_.subCases)
       .flatMap { subCase =>
         (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
       }
+      .map(ScopedExpression(_, this))
   }
 
-  def extractTestTypeExpressions: Seq[Expression] = {
+  def extractTestTypeExpressions: Seq[ScopedExpression[Expression]] = {
     testTypes
       .flatMap(_.cases)
       .flatMap(_.subCases)
       .flatMap { subCase =>
         (subCase.expression +: subCase.arguments) ++ subCase.messageArguments
       }
+      .map(ScopedExpression(_, this))
   }
 
-  def extractGeneratorExpressions: Seq[Expression] = {
-    context.generators.map(_.expression)
+  def extractGeneratorExpressions: Seq[ScopedExpression[Expression]] = {
+    context.generators.map { generator =>
+      ScopedExpression(generator.expression, generator, this)
+    }
   }
 
   def extractDeepExpressions(expression: Expression): Seq[Expression] = {
@@ -105,6 +117,10 @@ case class ValidationContext(
       .collect {
         case enum: Enum => enum
       }
+  }
+
+  def hasEnum(enumName: String): Boolean = {
+    getEnum(enumName).isDefined
   }
 
   def hasType(typeName: String): Boolean = {

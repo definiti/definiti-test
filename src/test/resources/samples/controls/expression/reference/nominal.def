@@ -1,0 +1,9 @@
+enum Result { valid invalid }
+
+context tests {{{
+  generator fromEnum(): Result = Result.valid
+
+  generator positiveNumberUnder(max: Number): Number = numberBetween(0, max)
+
+  generator exact(value: Number): Number = value
+}}}

@@ -5,7 +5,7 @@ import definiti.common.control.{Control, ControlLevel, ControlResult}
 import definiti.common.validation.Alert
 import definiti.tests.ast.{MethodCall, Type}
 import definiti.tests.validation.ValidationContext
-import definiti.tests.validation.helpers.Types
+import definiti.tests.validation.helpers.ScopedExpression
 
 object MethodExistenceControl extends Control[ValidationContext] {
   override def description: String = "Checks if the method exists for a method call"
@@ -19,8 +19,8 @@ object MethodExistenceControl extends Control[ValidationContext] {
       .map(controlMethodCall(_, context))
   }
 
-  private def controlMethodCall(methodCall: MethodCall, context: ValidationContext): ControlResult = {
-    val innerType = Types.getTypeOfExpression(methodCall.inner, context)
+  private def controlMethodCall(methodCall: ScopedExpression[MethodCall], context: ValidationContext): ControlResult = {
+    val innerType = methodCall.inner.typeOfExpression
     context.getFinalClassDefinition(innerType.name) match {
       case Some(native: NativeClassDefinition) if native.methods.exists(_.name == methodCall.method) =>
         ControlResult.OK

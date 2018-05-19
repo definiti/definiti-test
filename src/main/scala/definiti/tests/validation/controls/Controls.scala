@@ -15,6 +15,7 @@ object Controls {
     InputTypeForVerificationTestControl,
     MethodArgumentsControl,
     MethodExistenceControl,
+    ReferenceControl,
     StructureControl,
     SubCaseVerificationMessageTypesControl,
     SubCaseVerificationReferenceTypesControl,
