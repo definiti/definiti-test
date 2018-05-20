@@ -1,7 +1,5 @@
 package definiti.tests.parser
 
-import java.nio.file.{Files, Paths}
-
 import definiti.common.ast.Location
 import definiti.common.validation.{Invalid, Valid, Validated}
 import definiti.tests.ast._
@@ -10,13 +8,15 @@ import definiti.tests.parser.antlr.{GeneratorsLexer, GeneratorsParser}
 import definiti.tests.utils.CollectionUtils
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
+import scala.io.Source
+
 class GeneratorsContextParser(file: String) extends LocationUtils {
   def location = Location(file, 1, 1, 0, 0)
 
   def parse(): Validated[Seq[GeneratorMeta]] = {
     Valid(file)
-      .map(getClass.getClassLoader.getResource)
-      .map(url => CollectionUtils.scalaSeq(Files.lines(Paths.get(url.toURI))).mkString("\n"))
+      .map(Source.fromResource(_))
+      .map(_.mkString)
       .flatMap(toAntlr)
       .map(toAST)
   }
