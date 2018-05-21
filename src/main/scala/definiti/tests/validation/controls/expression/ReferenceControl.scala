@@ -21,7 +21,7 @@ object ReferenceControl extends Control[ValidationContext] {
 
   private def controlReference(scopedExpression: ScopedExpression[Reference]): ControlResult = {
     val referenceExistsInScope = scopedExpression.references.contains(scopedExpression.target)
-    val referencExistsAsEnum = scopedExpression.context.hasEnum(scopedExpression.target)
+    val referencExistsAsEnum = scopedExpression.hasEnum(scopedExpression.target)
     if (referenceExistsInScope || referencExistsAsEnum) {
       ControlResult.OK
     } else {

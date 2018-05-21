@@ -1,10 +1,10 @@
 package definiti.tests.validation.helpers
 
-import definiti.common.ast.{DefinedType, Enum, Location, NativeClassDefinition}
+import definiti.common.ast.{AliasType, ClassDefinition, DefinedType, Enum, Library, Location, NativeClassDefinition}
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
 
-case class ScopedExpression[E <: Expression](expression: E, references: Map[String, Type], context: ValidationContext) {
+case class ScopedExpression[E <: Expression](expression: E, references: Map[String, Type], generators: Seq[GeneratorMeta], library: Library) {
   private val boolean = Type("Boolean", Seq.empty)
   private val number = Type("Number", Seq.empty)
   private val string = Type("String", Seq.empty)
@@ -20,7 +20,7 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
       case _: NumberExpression => number
       case _: StringExpression => string
       case generation: GenerationExpression =>
-        context.generators.find(_.fullName == generation.name)
+        generators.find(_.fullName == generation.name)
           .map { generator =>
             Types.replaceGenerics(generator.typ, generator.generics.zip(generation.generics).toMap)
           }
@@ -28,7 +28,7 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
       case structure: StructureExpression => structure.typ
       case methodCall: MethodCall =>
         val innerExpressionType = process(methodCall.inner)
-        context.getFinalClassDefinition(innerExpressionType.name) match {
+        getFinalClassDefinition(innerExpressionType.name) match {
           case Some(native: NativeClassDefinition) =>
             (for {
               method <- native.methods.find(_.name == methodCall.method)
@@ -42,7 +42,7 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
         }
       case attributeCall: AttributeCall =>
         val innerExpressionType = process(attributeCall.inner)
-        context.getFinalClassDefinition(innerExpressionType.name) match {
+        getFinalClassDefinition(innerExpressionType.name) match {
           case Some(native: NativeClassDefinition) =>
             native.attributes
               .find(_.name == attributeCall.attribute)
@@ -63,7 +63,7 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
         references
           .get(reference.target)
           .orElse {
-            context.getEnum(reference.target)
+            getEnum(reference.target)
               .map(enum => Type(enum.fullName))
           }
           .getOrElse(any)
@@ -80,6 +80,29 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
         else boolean
     }
   }
+
+  def getClassDefinition(typeName: String): Option[ClassDefinition] = {
+    library.typesMap.get(typeName)
+  }
+
+  def getFinalClassDefinition(typeName: String): Option[ClassDefinition] = {
+    getClassDefinition(typeName) match {
+      case Some(aliasType: AliasType) => getFinalClassDefinition(aliasType.alias.typeName)
+      case other => other
+    }
+  }
+
+  def getEnum(enumName: String): Option[ClassDefinition] = {
+    library.typesMap
+      .get(enumName)
+      .collect {
+        case enum: Enum => enum
+      }
+  }
+
+  def hasEnum(enumName: String): Boolean = {
+    getEnum(enumName).isDefined
+  }
 }
 
 object ScopedExpression {
@@ -87,7 +110,8 @@ object ScopedExpression {
     new ScopedExpression(
       expression = expression,
       references = Map.empty,
-      context = context
+      generators = context.generators,
+      library = context.library
     )
   }
 
@@ -103,12 +127,13 @@ object ScopedExpression {
           }
         }.toMap
       },
-      context = context
+      generators = context.generators,
+      library = context.library
     )
   }
 
   def apply[E <: Expression](expression: E, innerScope: ScopedExpression[_]): ScopedExpression[E] = {
-    new ScopedExpression(expression, innerScope.references, innerScope.context)
+    new ScopedExpression(expression, innerScope.references, innerScope.generators, innerScope.library)
   }
 
   implicit class scopedGenerator(scopedExpression: ScopedExpression[GenerationExpression]) {
