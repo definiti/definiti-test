@@ -1,27 +1,17 @@
 package definiti.tests
 
-import definiti.common.ast.{ExtendedContext, Library, Location}
+import definiti.common.ast.{Library, Location}
 import definiti.common.plugin.ContextPlugin
 import definiti.common.program.ProgramResult
 import definiti.common.validation.{Invalid, SimpleError, Valid, Validated}
-import definiti.tests.ast.{Generator, GeneratorMeta, TestsContext}
+import definiti.tests.ast.TestsContext
 import definiti.tests.json.JsonAST
-import definiti.tests.parser.{GeneratorsContextParser, TestsContextParser}
-import definiti.tests.validation.{TestsValidation, ValidationContext}
+import definiti.tests.parser.TestsContextParser
+import definiti.tests.validation.TestsValidation
 import spray.json._
 
 class TestsPlugin extends ContextPlugin[TestsContext] {
   val configuration: Configuration = new FileConfiguration().load()
-
-  private val generatorFiles: Seq[String] = {
-    Seq("Boolean", "Date", "List", "Misc", "Number", "Option", "String")
-      .map(file => "generators/" + file + ".gen")
-  }
-
-  private lazy val coreGenerators: Validated[Seq[GeneratorMeta]] = {
-    Validated.squash(generatorFiles.map(file => new GeneratorsContextParser(file).parse()))
-      .map(_.flatten)
-  }
 
   override def name: String = "tests"
 
@@ -35,7 +25,7 @@ class TestsPlugin extends ContextPlugin[TestsContext] {
   }
 
   override def validate(context: TestsContext, library: Library): Validated[ProgramResult.NoResult] = {
-    coreGenerators
+    CoreGenerators.coreGenerators
       .flatMap { generators =>
         val result = new TestsValidation(library, configuration, generators).validate(context)
         if (result.alerts.nonEmpty) {
