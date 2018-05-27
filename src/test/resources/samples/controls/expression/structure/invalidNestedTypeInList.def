@@ -23,13 +23,13 @@ context tests {{{
     accept Person {
       firstName: "First"
       lastName: "Last"
-      contacts: List[Boolean](true)
+      contacts: list[Boolean](true)
     }
 
     refuse Person {
       firstName: ""
       lastName: ""
-      contacts: List[Contact](Contact {
+      contacts: list[Contact](Contact {
         name: ""
       })
     }

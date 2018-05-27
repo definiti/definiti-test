@@ -9,9 +9,9 @@ verification IsNonEmpty {
 
 context tests {{{
   test verification IsNonEmpty {
-    accept List[String](1)
-    accept List[Number]("")
-    accept List[String]("", 1, "")
-    refuse List[Number](1, "", "", 2)
+    accept list[String](1)
+    accept list[Number]("")
+    accept list[String]("", 1, "")
+    refuse list[Number](1, "", "", 2)
   }
 }}}

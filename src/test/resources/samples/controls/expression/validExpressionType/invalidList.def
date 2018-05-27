@@ -9,7 +9,7 @@ verification IsNonEmpty {
 
 context tests {{{
   test verification IsNonEmpty {
-    accept List[Unknown](Unknown())
-    refuse List[List[Unknown]]()
+    accept list[Unknown](Unknown())
+    refuse list[List[Unknown]]()
   }
 }}}

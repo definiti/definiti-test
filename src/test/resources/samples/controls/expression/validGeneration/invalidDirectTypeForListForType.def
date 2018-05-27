@@ -7,16 +7,16 @@ type Person {
 context tests {{{
   test verification IsNonEmpty {
     accept Person {
-      names: List[String](1)
+      names: list[String](1)
     }
     accept Person {
-      names: List[Number]("")
+      names: list[Number]("")
     }
     accept Person {
-      names: List[String]("", 1, "")
+      names: list[String]("", 1, "")
     }
     refuse Person {
-      names: List[Number](1, "", "", 2)
+      names: list[Number](1, "", "", 2)
     }
   }
 }}}

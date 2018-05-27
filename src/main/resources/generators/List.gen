@@ -1,4 +1,4 @@
-generator List[A](elements: A*): List[A]
+generator list[A](elements: A*): List[A]
 
 generator listOf[A](elements: A): List[A]
 

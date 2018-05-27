@@ -9,7 +9,7 @@ verification IsNonEmpty {
 
 context tests {{{
   test verification IsNonEmpty {
-    refuse List[List[Number]](List[String](""), List[Number](""), some[Number](""))
-    accept List[Option[String]](some[Number](1), some[String](1), List[String](1))
+    refuse list[List[Number]](list[String](""), list[Number](""), some[Number](""))
+    accept list[Option[String]](some[Number](1), some[String](1), list[String](1))
   }
 }}}

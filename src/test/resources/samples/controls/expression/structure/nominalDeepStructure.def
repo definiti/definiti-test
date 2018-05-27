@@ -24,7 +24,7 @@ context tests {{{
       Person {
         firstName: "First"
         lastName: "Last"
-        contacts: List[Contact](Contact {
+        contacts: list[Contact](Contact {
           name: "Contact"
           phone: "0123456789"
         })
@@ -32,19 +32,19 @@ context tests {{{
       Person {
         firstName: "Some"
         lastName: "Thing"
-        contacts: List[Contact]()
+        contacts: list[Contact]()
       }
 
     refuse
       Person {
         firstName: ""
         lastName: ""
-        contacts: List[Contact]()
+        contacts: list[Contact]()
       }
       Person {
         firstName: ""
         lastName: "Last"
-        contacts: List[Contact](Contact {
+        contacts: list[Contact](Contact {
           name: "Some"
           phone: "xyz"
         })

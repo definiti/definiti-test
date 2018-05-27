@@ -6,15 +6,15 @@ type Person {
 
 context tests {{{
   test type Person {
-    accept Person { names: List[String]("") }
+    accept Person { names: list[String]("") }
     accept Person {
-      names: List[String]("", "")
+      names: list[String]("", "")
     }
     accept Person {
-      names: List[String]("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+      names: list[String]("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
     }
     refuse Person {
-      names: List[String]()
+      names: list[String]()
     }
   }
 }}}

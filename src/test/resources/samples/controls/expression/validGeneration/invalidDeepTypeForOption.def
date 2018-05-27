@@ -11,7 +11,7 @@ context tests {{{
   test verification IsNonEmpty {
     accept some[Option[String]](some[Number](1))
     accept some[Option[String]](some[String](1))
-    refuse some[List[Number]](List[String](""))
-    refuse some[List[Number]](List[Number](""))
+    refuse some[List[Number]](list[String](""))
+    refuse some[List[Number]](list[Number](""))
   }
 }}}
