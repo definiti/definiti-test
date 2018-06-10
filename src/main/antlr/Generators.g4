@@ -17,7 +17,7 @@ parameters
   | '(' (parameter ',')* parameter ')'
   ;
 
-parameter: IDENTIFIER ':' type (restSymbol = '*')?;
+parameter: IDENTIFIER ':' type (genSymbol = '?')? (restSymbol = '*')?;
 
 type: IDENTIFIER genericTypes?;
 genericTypes: '[' (type ',')* type ']';

@@ -1,0 +1,9 @@
+context tests {{{
+  generator nonEmptyConstStringList(): List[String] = listOf[String]("")
+
+  generator nonEmptyGenStringList(): List[String] = listOf[String](anyString())
+
+  generator nonEmptyGivenConstStringList(string: String): List[String] = listOf[String](string)
+
+  generator nonEmptyGivenGenStringList(string: String?): List[String] = listOf[String](string)
+}}}

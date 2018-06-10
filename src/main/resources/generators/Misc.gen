@@ -1,1 +1,1 @@
-generator oneOf[A](elements: A*): A
+generator oneOf[A](elements: A?*): A

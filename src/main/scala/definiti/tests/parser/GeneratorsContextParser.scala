@@ -79,6 +79,7 @@ class GeneratorsContextParser(file: String) extends LocationUtils {
       name = context.IDENTIFIER().getText,
       typ = processType(context.`type`()),
       isRest = Option(context.restSymbol).isDefined,
+      isGen = Option(context.genSymbol).isDefined,
       location = getLocationFromContext(context)
     )
   }

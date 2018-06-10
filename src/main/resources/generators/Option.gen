@@ -1,5 +1,7 @@
-generator optionOf[A](element: A): Option[A]
+generator optionOf[A](element: A?): Option[A]
 
 generator some[A](element: A): Option[A]
+
+generator someOf[A](element: A?): Option[A]
 
 generator none[A](): Option[A]

@@ -207,6 +207,7 @@ class AntlrToAstAdapter(packageName: String, imports: Map[String, String], val l
       name = context.IDENTIFIER().getText,
       typ = processType(context.`type`()),
       isRest = false,
+      isGen = Option(context.genSymbol).isDefined,
       location = getLocationFromContext(context)
     )
   }

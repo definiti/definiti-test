@@ -14,6 +14,7 @@ libraryDependencies += "io.github.definiti" %% "core" % "0.3.0-SNAPSHOT"
 libraryDependencies += "io.github.definiti" % "api" % "0.3.0-SNAPSHOT"
 libraryDependencies += "org.antlr" % "antlr4" % "4.7.1"
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.4"
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.1"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"

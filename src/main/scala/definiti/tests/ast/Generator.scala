@@ -16,6 +16,7 @@ case class Parameter(
   name: String,
   typ: Type,
   isRest: Boolean,
+  isGen: Boolean,
   location: Location
 )
 

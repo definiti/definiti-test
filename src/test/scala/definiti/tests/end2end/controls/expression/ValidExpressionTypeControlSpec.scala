@@ -72,6 +72,11 @@ class ValidExpressionTypeControlSpec extends EndToEndSpec {
       ValidExpressionTypeControl.invalidType(any, thenAndElseHaveDifferentTypesLocation(3, 5, 4, 16))
     ))
   }
+
+  it should "validate generators with expression being const or gen" in {
+    val output = processFile("controls.expression.validExpressionType.validGenConstTransformation", configuration)
+    output shouldBe ok[Root]
+  }
 }
 
 object ValidExpressionTypeControlSpec {
