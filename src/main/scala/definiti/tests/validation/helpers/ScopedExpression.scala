@@ -3,57 +3,63 @@ package definiti.tests.validation.helpers
 import definiti.common.ast.{AliasType, ClassDefinition, DefinedType, Enum, Library, Location, NativeClassDefinition}
 import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
+import definiti.tests.validation.helpers.ScopedExpression.TypeInfo
 
-case class ScopedExpression[E <: Expression](expression: E, references: Map[String, Type], generators: Seq[GeneratorMeta], library: Library) {
+case class ScopedExpression[E <: Expression](expression: E, references: Map[String, TypeInfo], generators: Seq[GeneratorMeta], library: Library) {
+  // Natural logic of types is to not be generators.
+  private implicit def typeAsTypeInfo(typ: Type): TypeInfo = TypeInfo(typ, isGenerator = false)
+
   private val boolean = Type("Boolean", Seq.empty)
   private val number = Type("Number", Seq.empty)
   private val string = Type("String", Seq.empty)
   private val any = Type("Any", Seq.empty)
 
-  def typeOfExpression: Type = process(expression)
+  def typeOfExpression: Type = process(expression).typ
+
+  def isGeneratorExpression: Boolean = process(expression).isGenerator
 
   def location: Location = expression.location
 
-  private def process(expression: Expression): Type = {
+  private def process(expression: Expression): TypeInfo = {
     expression match {
       case _: BooleanExpression => boolean
       case _: NumberExpression => number
       case _: StringExpression => string
       case generation: GenerationExpression =>
         generators.find(_.fullName == generation.name)
-          .map { generator =>
+          .map[TypeInfo] { generator =>
             Types.replaceGenerics(generator.typ, generator.generics.zip(generation.generics).toMap)
           }
           .getOrElse(any)
       case structure: StructureExpression => structure.typ
       case methodCall: MethodCall =>
         val innerExpressionType = process(methodCall.inner)
-        getFinalClassDefinition(innerExpressionType.name) match {
+        getFinalClassDefinition(innerExpressionType.typ.name) match {
           case Some(native: NativeClassDefinition) =>
             (for {
               method <- native.methods.find(_.name == methodCall.method)
               returnType = Types.typeReferenceToType(method.returnType)
               finalType = Types.replaceGenerics(returnType, method.genericTypes.zip(methodCall.generics).toMap)
             } yield {
-              finalType
+              finalType: TypeInfo
             })
               .getOrElse(any)
           case _ => any
         }
       case attributeCall: AttributeCall =>
         val innerExpressionType = process(attributeCall.inner)
-        getFinalClassDefinition(innerExpressionType.name) match {
+        getFinalClassDefinition(innerExpressionType.typ.name) match {
           case Some(native: NativeClassDefinition) =>
             native.attributes
               .find(_.name == attributeCall.attribute)
               .map(_.typeDeclaration)
-              .map(Types.typeDeclarationToType)
+              .map[TypeInfo](Types.typeDeclarationToType)
               .getOrElse(any)
           case Some(definedType: DefinedType) =>
             definedType.attributes
               .find(_.name == attributeCall.attribute)
               .map(_.typeDeclaration)
-              .map(Types.typeDeclarationToType)
+              .map[TypeInfo](Types.typeDeclarationToType)
               .getOrElse(any)
           case Some(enum: Enum) =>
             Type(enum.fullName)
@@ -64,7 +70,7 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
           .get(reference.target)
           .orElse {
             getEnum(reference.target)
-              .map(enum => Type(enum.fullName))
+              .map(enum => TypeInfo(Type(enum.fullName), isGenerator = false))
           }
           .getOrElse(any)
       case condition: Condition =>
@@ -106,6 +112,8 @@ case class ScopedExpression[E <: Expression](expression: E, references: Map[Stri
 }
 
 object ScopedExpression {
+  case class TypeInfo(typ: Type, isGenerator: Boolean)
+
   def apply[E <: Expression](expression: E, context: ValidationContext): ScopedExpression[E] = {
     new ScopedExpression(
       expression = expression,
@@ -121,9 +129,9 @@ object ScopedExpression {
       references = {
         generator.parameters.map { parameter =>
           if (parameter.isRest) {
-            parameter.name -> Type("List", Seq(parameter.typ))
+            parameter.name -> TypeInfo(Type("List", Seq(parameter.typ)), isGenerator = parameter.isGen)
           } else {
-            parameter.name -> parameter.typ
+            parameter.name -> TypeInfo(parameter.typ, isGenerator = parameter.isGen)
           }
         }.toMap
       },
