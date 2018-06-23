@@ -37,6 +37,16 @@ class ExpressionTypeOfGeneratorControlSpec extends EndToEndSpec {
       ExpressionTypeOfGeneratorControl.invalidType(string, Type("Person"), invalidTypeForStructureLocation(8, 35, 10, 4))
     ))
   }
+
+  it should "validate an expression with the right generic" in {
+    val output = processFile("controls.generator.expressionTypeOfGenerator.validGeneratorWithGenerics", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "invalidate an expression with the wrong generic" in {
+    val output = processFile("controls.generator.expressionTypeOfGenerator.invalidGeneratorWithGenerics", configuration)
+    output shouldBe ko[Root]
+  }
 }
 
 object ExpressionTypeOfGeneratorControlSpec {
