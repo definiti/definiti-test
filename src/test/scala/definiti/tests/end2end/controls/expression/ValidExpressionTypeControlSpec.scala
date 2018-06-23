@@ -77,6 +77,11 @@ class ValidExpressionTypeControlSpec extends EndToEndSpec {
     val output = processFile("controls.expression.validExpressionType.validGenConstTransformation", configuration)
     output shouldBe ok[Root]
   }
+
+  it should "validate an expression using generic types" in {
+    val output = processFile("controls.expression.validExpressionType.validGenerics", configuration)
+    output shouldBe ok[Root]
+  }
 }
 
 object ValidExpressionTypeControlSpec {

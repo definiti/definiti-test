@@ -4,9 +4,8 @@ import definiti.common.ast.{Root, TypeReference}
 import definiti.common.program.Ko
 import definiti.common.tests.LocationPath
 import definiti.tests.ConfigurationBuilder
-import definiti.tests.ast.Type
 import definiti.tests.end2end.EndToEndSpec
-import definiti.tests.utils.CommonTypes.{any, string}
+import definiti.tests.utils.CommonTypes.string
 import definiti.tests.validation.controls.expression.MethodArgumentsControl
 
 class MethodArgumentsControlSpec extends EndToEndSpec {
@@ -34,6 +33,16 @@ class MethodArgumentsControlSpec extends EndToEndSpec {
       MethodArgumentsControl.invalidTypeOfArgument(TypeReference("Number"), string, invalidTypeOfArgumentLocation(4, 57, 60)),
       MethodArgumentsControl.invalidTypeOfArgument(TypeReference("Number"), string, invalidTypeOfArgumentLocation(6, 54, 57))
     ))
+  }
+
+  it should "accept an argument with the valid type of a generic" in {
+    val output = processFile("controls.expression.methodArguments.validParameterWithGenerics", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "refuse an argument with the invalid type of a generic" in {
+    val output = processFile("controls.expression.methodArguments.invalidParameterWithGenerics", configuration)
+    output shouldBe ko[Root]
   }
 }
 

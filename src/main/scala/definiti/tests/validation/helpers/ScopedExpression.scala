@@ -5,7 +5,13 @@ import definiti.tests.ast._
 import definiti.tests.validation.ValidationContext
 import definiti.tests.validation.helpers.ScopedExpression.TypeInfo
 
-case class ScopedExpression[E <: Expression](expression: E, references: Map[String, TypeInfo], generators: Seq[GeneratorMeta], library: Library) {
+case class ScopedExpression[E <: Expression](
+  expression: E,
+  references: Map[String, TypeInfo],
+  definedGenerics: Seq[String],
+  generators: Seq[GeneratorMeta],
+  library: Library
+) {
   // Natural logic of types is to not be generators.
   private implicit def typeAsTypeInfo(typ: Type): TypeInfo = TypeInfo(typ, isGenerator = false)
 
@@ -118,6 +124,7 @@ object ScopedExpression {
     new ScopedExpression(
       expression = expression,
       references = Map.empty,
+      definedGenerics = Seq.empty,
       generators = context.generators,
       library = context.library
     )
@@ -135,13 +142,20 @@ object ScopedExpression {
           }
         }.toMap
       },
+      definedGenerics = generator.generics,
       generators = context.generators,
       library = context.library
     )
   }
 
   def apply[E <: Expression](expression: E, innerScope: ScopedExpression[_]): ScopedExpression[E] = {
-    new ScopedExpression(expression, innerScope.references, innerScope.generators, innerScope.library)
+    new ScopedExpression(
+      expression = expression,
+      references = innerScope.references,
+      definedGenerics = innerScope.definedGenerics,
+      generators = innerScope.generators,
+      library = innerScope.library
+    )
   }
 
   implicit class scopedGenerator(scopedExpression: ScopedExpression[GenerationExpression]) {
