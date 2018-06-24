@@ -1,0 +1,21 @@
+type Person {
+  firstName: Name
+  lastName: Name
+}
+
+type Name = String
+
+context tests {{{
+  test type Person {
+    accept
+      Person {
+        firstName: "First"
+        lastName: "Last"
+      }
+    refuse
+      Person {
+        firstName: ""
+        lastName: ""
+      }
+  }
+}}}

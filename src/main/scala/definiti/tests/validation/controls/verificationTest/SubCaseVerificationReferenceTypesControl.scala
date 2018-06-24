@@ -34,7 +34,7 @@ object SubCaseVerificationReferenceTypesControl extends Control[ValidationContex
     if (verification.parameters.length == subCase.arguments.length) {
       verification.parameters.zip(subCase.arguments)
         .map { case (verificationParameter, caseArgument) =>
-          controlExpression(ScopedExpression(caseArgument, context), ScopedType(verificationParameter.typeReference, verification))
+          controlExpression(ScopedExpression(caseArgument, context), ScopedType(verificationParameter.typeReference, verification, context))
         }
     } else {
       invalidNumberOfParameters(verification.parameters.length, subCase.arguments.length, subCase.location)

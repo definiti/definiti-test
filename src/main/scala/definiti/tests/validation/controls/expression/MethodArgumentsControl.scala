@@ -35,7 +35,7 @@ object MethodArgumentsControl extends Control[ValidationContext] {
     methodDefinition.parameters.zip(methodCall.arguments)
       .map { case (parameter, argument) =>
         val typeOfArgument = Types.finalType(argument.typeOfExpression, context)
-        val scopedTypeOfParameter = ScopedType(parameter.typeReference, methodDefinition)
+        val scopedTypeOfParameter = ScopedType(parameter.typeReference, methodDefinition, context)
         if (scopedTypeOfParameter.isSameAs(typeOfArgument)) {
           ControlResult.OK
         } else {

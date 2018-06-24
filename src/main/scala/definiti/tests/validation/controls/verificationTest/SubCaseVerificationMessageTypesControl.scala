@@ -48,7 +48,7 @@ object SubCaseVerificationMessageTypesControl extends Control[ValidationContext]
     if (typedMessage.types.length == subCase.messageArguments.length) {
       typedMessage.types.zip(subCase.messageArguments)
         .map { case (messageParameterType, caseArgument) =>
-          controlExpression(ScopedExpression(caseArgument, context), ScopedType(messageParameterType))
+          controlExpression(ScopedExpression(caseArgument, context), ScopedType(messageParameterType, context))
         }
     } else {
       invalidNumberOfParameters(typedMessage.types.length, subCase.messageArguments.length, subCase.location)

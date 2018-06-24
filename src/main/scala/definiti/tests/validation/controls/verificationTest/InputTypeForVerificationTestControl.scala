@@ -28,7 +28,7 @@ object InputTypeForVerificationTestControl extends Control[ValidationContext] {
 
   private def controlTestCase(testCase: Case, verification: Verification, context: ValidationContext): ControlResult = {
     val typeReference = verification.function.parameters.head.typeReference
-    testCase.subCases.map(subCase => controlExpression(ScopedExpression(subCase.expression, context), ScopedType(typeReference, verification)))
+    testCase.subCases.map(subCase => controlExpression(ScopedExpression(subCase.expression, context), ScopedType(typeReference, verification, context)))
   }
 
   private def controlExpression(expression: ScopedExpression[Expression], scopedType: ScopedType): ControlResult = {
