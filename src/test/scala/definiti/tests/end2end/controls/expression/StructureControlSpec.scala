@@ -86,6 +86,16 @@ class StructureControlSpec extends EndToEndSpec {
       StructureControl.fieldMissing("phone", Type("x.Contact"), invalidNestedTypeInListLocation(32, 31, 34, 8))
     ))
   }
+
+  it should "validate a structure with a field targeting a valid alias type" in {
+    val output = processFile("controls.expression.structure.validAliasType", configuration)
+    output shouldBe ok[Root]
+  }
+
+  it should "invalidate a structure with a field targeting an invalid alias type" in {
+    val output = processFile("controls.expression.structure.invalidAliasType", configuration)
+    output shouldBe ko[Root]
+  }
 }
 
 object StructureControlSpec {

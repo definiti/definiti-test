@@ -24,7 +24,7 @@ object StructureControl extends Control[ValidationContext] {
         ControlResult.squash {
           Seq(
             controlFieldList(structureExpression, definedType),
-            controlFieldTypes(structureExpression, definedType)
+            controlFieldTypes(structureExpression, definedType, context)
           )
         }
       case None =>
@@ -44,7 +44,7 @@ object StructureControl extends Control[ValidationContext] {
     (addedFields ++ missingFields).map(ControlResult(_))
   }
 
-  private def controlFieldTypes(structureExpression: ScopedExpression[StructureExpression], definedType: DefinedType): ControlResult = {
+  private def controlFieldTypes(structureExpression: ScopedExpression[StructureExpression], definedType: DefinedType, context: ValidationContext): ControlResult = {
     val fieldsWithAttributes = structureExpression.fields.flatMap { field =>
       definedType.attributes
         .find(_.name == field.name)
@@ -53,7 +53,7 @@ object StructureControl extends Control[ValidationContext] {
     fieldsWithAttributes.map { case (field, attribute) =>
       val fieldType = field.expression.typeOfExpression
       val attributeType = attribute.typeDeclaration
-      if (ScopedType(attributeType, definedType).isSameAs(fieldType)) {
+      if (ScopedType(attributeType, definedType, context).isSameAs(fieldType)) {
         ControlResult.OK
       } else {
         ControlResult(invalidType(Types.typeDeclarationToTypeReference(attributeType), fieldType, field.expression.location))
