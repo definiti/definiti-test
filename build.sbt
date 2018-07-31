@@ -4,21 +4,18 @@ organization := "io.github.definiti"
 
 name := "tests"
 
-version := "0.3.0-SNAPSHOT"
-
 scalaVersion := "2.12.6"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-libraryDependencies += "io.github.definiti" %% "core" % "0.3.0-SNAPSHOT"
-libraryDependencies += "io.github.definiti" % "api" % "0.3.0-SNAPSHOT"
+libraryDependencies += "io.github.definiti" %% "core" % "0.3.0"
 libraryDependencies += "org.antlr" % "antlr4" % "4.7.1"
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.4"
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.1"
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.2.0"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
-libraryDependencies += "io.github.definiti" % "api" % "0.3.0-SNAPSHOT" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
+libraryDependencies += "io.github.definiti" % "api" % "0.3.0" % "test"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:implicitConversions", "-feature")
 
@@ -70,13 +67,13 @@ antlr := antlr.dependsOn(antlrTests, antlrGenerators).value
 
 compile in Compile := (compile in Compile).dependsOn(antlr).value
 
-useGpg := true
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 pomIncludeRepository := { _ => false }
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
-homepage := Some(url("https://definiti.github.io"))
+homepage := Some(url("https://definiti.gitbook.io/definiti"))
 
 scmInfo := Some(
   ScmInfo(
